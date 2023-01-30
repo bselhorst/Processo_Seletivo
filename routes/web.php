@@ -5,6 +5,7 @@ use App\Http\Controllers\AuxiliarMunicipioController;
 use App\Http\Controllers\AuxiliarTipoDocumentoController;
 use App\Http\Controllers\ProcessoSeletivoController;
 use App\Http\Controllers\ProcessoSeletivoCursoController;
+use App\Http\Controllers\ProcessoSeletivoInscricaoController;
 use Illuminate\Support\Facades\Route;
 use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
@@ -86,6 +87,7 @@ Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = nul
         'tipo_documentos' => AuxiliarTipoDocumento::orderBy("nome")->get(),
     ]);
 })->name('inscricao');
+Route::post('/inscricao', [ProcessoSeletivoInscricaoController::class, 'store'])->middleware(['auth', 'verified'])->name('inscricao.store');
 
 
 

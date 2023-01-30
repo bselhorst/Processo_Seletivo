@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ProcessoSeletivoInscricao;
 
 class ProcessoSeletivoInscricaoController extends Controller
 {
@@ -35,7 +36,24 @@ class ProcessoSeletivoInscricaoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $request;
+        // $validatedData = $request->validate([
+        //     'id_processo_seletivo_curso' => 'required',
+        //     'id_tipo_documento' => 'required',
+        //     'numero_documento' => 'required',
+        //     'nome' => 'required',
+        //     'endereco' => 'required',
+        //     'bairro' => '',
+        //     'numero_contato' => 'required',
+        //     'email' => '',
+        //     'anexo_documento' => 'required',
+        //     'anexo_titulacao' => '',
+        //     'anexo_qualificacao' => '',
+        //     'anexo_experiencia_profissional' => '',
+        // ]);
+        // $new = ProcessoSeletivo::create($validatedData);
+        // $request->file->storeAs("public/inscricao/$new->id", 'edital.pdf');
+        // return redirect()->route("inscricao")->with('success', 'Registro adicionado com sucesso!');
     }
 
     /**

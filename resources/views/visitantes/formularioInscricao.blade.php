@@ -6,15 +6,14 @@
 
 @section('content')
 <div class="card">
-    <form class="form-validate-jquery" method='POST' action="{{ route('password.update') }}" novalidate>
+    <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" novalidate>
         @csrf
-        @method('put')
         <div class="card-body">
 			<div class="fw-bold border-bottom pb-2 mb-3">Dados do Processo Seletivo</div>            
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Vaga<span class="text-danger">*</span></label>
 				<div class="col-lg-9">
-					<select name="styled_select" class="form-select" required="">
+					<select name="id_processo_seletivo_curso" class="form-select" required="">
 						<option value="">Escolha uma vaga abaixo</option> 
 						    {{ $old = '' }}
 							@foreach ($vagas as $vaga)
@@ -37,7 +36,7 @@
             <div class="row mb-3">
 				<label class="col-form-label col-lg-3">Nome Completo <span class="text-danger">*</span></label>
 				<div class="col-lg-9">
-					<input type="text" name="name" class="form-control" required="" placeholder="Nome completo sem abreviações" aria-invalid="false">
+					<input type="text" name="nome" class="form-control" required="" placeholder="Nome completo sem abreviações" aria-invalid="false">
 				</div>
 			</div>
 			<div class="row mb-3">
@@ -55,7 +54,7 @@
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Número do documento <span class="text-danger">*</span></label>
 				<div class="col-lg-4">
-					<input type="text" name="cpf" class="form-control" required="" placeholder="Ex: 12345678901" aria-invalid="false">
+					<input type="text" name="numero_documento" class="form-control" required="" placeholder="Ex: 12345678901" aria-invalid="false">
 				</div>
 			</div>
 
@@ -69,14 +68,14 @@
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Bairro</label>
 				<div class="col-lg-9">
-					<input type="text" name="endereco" class="form-control" placeholder="Ex: Centro" aria-invalid="false">
+					<input type="text" name="bairro" class="form-control" placeholder="Ex: Centro" aria-invalid="false">
 				</div>
 			</div>
 
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Número para contato (DDD + número (somente número)) <span class="text-danger">*</span></label>
 				<div class="col-lg-9">
-					<input type="text" name="digits" class="form-control" required="" placeholder="68999999999">
+					<input type="text" name="numero_contato" class="form-control" required="" placeholder="68999999999">
 				</div>
 			</div>
 
@@ -96,7 +95,7 @@
 				<div class="card-body">
 					<p class="mb-3">Exemplo de documentos (com foto): RG, Passaporte, Carteira de Trabalho.</p>					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input-required" multiple="multiple">
+					<input type="file" name="anexo_documento" class="file-input-required" multiple="multiple">
 				</div>
 			</div>
 
@@ -106,7 +105,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_titulacao" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
@@ -116,7 +115,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_qualificacao" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
@@ -126,7 +125,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_experiencia_profissional" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
