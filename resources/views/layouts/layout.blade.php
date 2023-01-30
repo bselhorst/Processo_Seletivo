@@ -145,6 +145,7 @@
 							</a>
 							<ul class="nav-group-sub collapse">
 								<li class="nav-item"><a href="{{ route('aux.municipio.index') }}" class="nav-link">Municípios</a></li>
+								<li class="nav-item"><a href="{{ route('aux.tipodocumento.index') }}" class="nav-link">Tipos de Documento</a></li>
 							</ul>
 						</li>
 						<li class="nav-item nav-item-submenu">

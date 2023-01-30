@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuxiliarMunicipioController;
+use App\Http\Controllers\AuxiliarTipoDocumentoController;
 use App\Http\Controllers\ProcessoSeletivoController;
 use App\Http\Controllers\ProcessoSeletivoCursoController;
 use Illuminate\Support\Facades\Route;
+use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
 use App\Models\ProcessoSeletivoCurso;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +31,14 @@ Route::prefix('auxiliares')->group(function () {
         Route::post('/', [AuxiliarMunicipioController::class, 'store'])->middleware(['auth', 'verified'])->name('aux.municipio.store');
         Route::patch('/{id}', [AuxiliarMunicipioController::class, 'update'])->middleware(['auth', 'verified'])->name('aux.municipio.update');
         Route::delete('/{id}', [AuxiliarMunicipioController::class, 'destroy'])->middleware(['auth', 'verified'])->name('aux.municipio.destroy');
+    });
+    Route::prefix('tipo_documentos')->group(function () {
+        Route::get('/', [AuxiliarTipoDocumentoController::class, 'index'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.index');
+        Route::post('/search', [AuxiliarTipoDocumentoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.indexSearch');
+        Route::get('/{id}', [AuxiliarTipoDocumentoController::class, 'edit'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.edit');
+        Route::post('/', [AuxiliarTipoDocumentoController::class, 'store'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.store');
+        Route::patch('/{id}', [AuxiliarTipoDocumentoController::class, 'update'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.update');
+        Route::delete('/{id}', [AuxiliarTipoDocumentoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.destroy');
     });
 });
 
@@ -53,6 +64,29 @@ Route::prefix('processoseletivo')->group(function () {
         Route::delete('/{id}', [ProcessoSeletivoCursoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('pc.destroy');
     });
 });
+
+//ROTA DO EDITAL
+Route::get('/edital/{id}', function ($id) {
+    return view('edital', [
+        'data' => ProcessoSeletivo::findOrFail($id),
+        'data_curso' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->get(),
+        'salario' => ProcessoSeletivoCurso::where("salario", ">", 0)->get(),
+    ]);
+})->name('edital');
+
+//ROTA FORMULÁRIO DE INSCRIÇÃO
+Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = null) {
+    return view('visitantes.formularioInscricao', [
+        'vagas' => DB::table('processo_seletivo_cursos')
+                    ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
+                    ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
+                    ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
+                    ->get(),
+        'id_vaga' => $id_curso,
+        'tipo_documentos' => AuxiliarTipoDocumento::orderBy("nome")->get(),
+    ]);
+})->name('inscricao');
+
 
 
 //CURSOS COM UM PREFIXO DE CURSOS
@@ -86,17 +120,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/edital/{id}', function ($id) {
-    return view('edital', [
-        'data' => ProcessoSeletivo::findOrFail($id),
-        'data_curso' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->get(),
-        'salario' => ProcessoSeletivoCurso::where("salario", ">", 0)->get(),
-    ]);
-})->name('edital');
 
-Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = null) {
-    return view('visitantes.formularioInscricao');
-})->name('inscricao');
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -11,29 +11,23 @@
         @method('put')
         <div class="card-body">
 			<div class="fw-bold border-bottom pb-2 mb-3">Dados do Processo Seletivo</div>            
-            <div class="row mb-3">
-				<label class="col-form-label col-lg-3">Processo Seletivo<span class="text-danger">*</span></label>
-				<div class="col-lg-9">
-					<select name="styled_select" class="form-select select" required="">
-						<option value="">Escolha um tipo de ducumento abaixo</option> 
-						<option value="AK">CNH</option>
-						<option value="AK">RG</option>
-						<option value="HI">CPF</option>
-						<option value="CA">Passaporte</option>
-						<option value="CA">Documento de Classe</option>
-					</select>
-				</div>
-			</div>
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Vaga<span class="text-danger">*</span></label>
 				<div class="col-lg-9">
 					<select name="styled_select" class="form-select" required="">
-						<option value="">Escolha um tipo de ducumento abaixo</option> 
-						<option value="AK">CNH</option>
-						<option value="AK">RG</option>
-						<option value="HI">CPF</option>
-						<option value="CA">Passaporte</option>
-						<option value="CA">Documento de Classe</option>
+						<option value="">Escolha uma vaga abaixo</option> 
+						    {{ $old = '' }}
+							@foreach ($vagas as $vaga)
+								@if ($vaga->processo_seletivo != $old)
+									@if ($old != '')
+										</optgroup>
+									@endif
+									{{ $old = $vaga->processo_seletivo}}
+									<optgroup label="{{ $vaga->processo_seletivo }}">
+								@endif						
+									<option value="{{ $vaga->id }}" {{ (@$id_vaga == $vaga->id)? 'selected': '' }}> {{ $vaga->municipio }} / {{ $vaga->titulo }}</option>
+							@endforeach
+							</optgroup>
 					</select>
 				</div>
 			</div>
@@ -47,22 +41,20 @@
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label class="col-form-label col-lg-3">Tipo de Documento (Com foto) <span class="text-danger">*</span></label>
-				<div class="col-lg-9">
-					<select name="styled_select" class="form-select" required="">
-						<option value="">Escolha um tipo de ducumento abaixo</option> 
-						<option value="AK">CNH</option>
-						<option value="AK">RG</option>
-						<option value="HI">CPF</option>
-						<option value="CA">Passaporte</option>
-						<option value="CA">Documento de Classe</option>
+				<label class="col-form-label col-lg-3">Tipo de Documento <span class="text-danger">*</span></label>
+				<div class="col-lg-4">
+					<select name="id_tipo_documento" class="form-select" required="">
+						<option value="">Escolha um tipo de documento abaixo</option>
+						@foreach (@$tipo_documentos as $tipo)
+							<option value="{{ $tipo->id }}">{{ $tipo->nome }}</option>
+						@endforeach
 					</select>
 				</div>
 			</div>
 			
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Número do documento <span class="text-danger">*</span></label>
-				<div class="col-lg-9">
+				<div class="col-lg-4">
 					<input type="text" name="cpf" class="form-control" required="" placeholder="Ex: 12345678901" aria-invalid="false">
 				</div>
 			</div>
@@ -114,7 +106,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple" required>
+					<input type="file" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
@@ -124,7 +116,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple" required>
+					<input type="file" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
@@ -134,7 +126,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple" required>
+					<input type="file" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
