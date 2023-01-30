@@ -39,7 +39,9 @@
                                     <th>Município</th>
                                     <th>Titulo</th>
                                     <th>Descrição</th>
-                                    <th>Salário</th>
+                                    @if (count($salario) > 0)
+                                        <th>Salário</th>
+                                    @endif
                                     <th>Vagas</th>
                                     <th class="text-center">Ações</th>
                                 </tr>
@@ -48,10 +50,12 @@
                                 @foreach ($data_curso as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ $item->municipio }}</td>
+                                        <td>{{ App\Models\AuxiliarMunicipio::with('municipio')->findOrFail($item->id)->nome }}</td>
                                         <td>{{ $item->titulo }}</td>
                                         <td>{{ $item->descricao }}</td>
-                                        <td>{{ $item->salario }}</td>
+                                        @if (count($salario) > 0)
+                                            <td>{{ $item->salario }}</td>
+                                        @endif                                        
                                         <td>{{ $item->vagas }}</td>
                                         <td class="text-center">
                                             <a href="{{ route('inscricao', ['id' => $data->id,'id_curso' => $item->id]) }}">Inscrição</a>

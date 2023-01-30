@@ -24,11 +24,13 @@
     <script src="{{ asset('assets/js/vendor/forms/validation/validate.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/forms/selects/select2.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/uploaders/fileinput/fileinput.min.js') }}"></script>
+	<script src="{{ asset('assets/js/vendor/forms/selects/select2.min.js') }}"></script>
 
 	<script src="{{ asset('assets/js/app.js') }}"></script>
 	<script src="{{ asset('assets/demo/pages/uploader_bootstrap.js') }}"></script>
 	<script src="{{ asset('assets/demo/pages/form_validation_styles.js') }}"></script>
     <script src="{{ asset('assets/demo/pages/form_validation_library.js') }}"></script>
+	<script src="{{ asset('assets/demo/pages/form_select2.js') }}"></script>
 	{{-- <script src="{{ asset('assets/demo/charts/pages/dashboard_6/area_gradient.js') }}"></script>
 	<script src="{{ asset('assets/demo/charts/pages/dashboard_6/map_europe_effect.js') }}"></script>
 	<script src="{{ asset('assets/demo/charts/pages/dashboard_6/progress_sortable.js') }}"></script>

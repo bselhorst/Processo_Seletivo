@@ -14,7 +14,7 @@
             <div class="row mb-3">
 				<label class="col-form-label col-lg-3">Processo Seletivo<span class="text-danger">*</span></label>
 				<div class="col-lg-9">
-					<select name="styled_select" class="form-select" required="">
+					<select name="styled_select" class="form-select select" required="">
 						<option value="">Escolha um tipo de ducumento abaixo</option> 
 						<option value="AK">CNH</option>
 						<option value="AK">RG</option>
@@ -59,6 +59,7 @@
 					</select>
 				</div>
 			</div>
+			
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Número do documento <span class="text-danger">*</span></label>
 				<div class="col-lg-9">
@@ -101,9 +102,9 @@
 					<h5 class="mb-0">Documento com foto (RG, Passaporte, Carteira de Trabalho)</h5>
 				</div>
 				<div class="card-body">
-					<p class="mb-3">Bootstrap <code>file input</code> html, video, audio, flash, and objects.</p>					
+					<p class="mb-3">Exemplo de documentos (com foto): RG, Passaporte, Carteira de Trabalho.</p>					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" class="file-input" multiple="multiple" required>
+					<input type="file" class="file-input-required" multiple="multiple">
 				</div>
 			</div>
 

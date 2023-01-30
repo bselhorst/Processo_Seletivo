@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="row mb-3">
-                    <label class="col-form-label col-lg-2 offset-lg-1">Descrição <span class="text-danger">*</span></label>
+                    <label class="col-form-label col-lg-2 offset-lg-1">Descrição</label>
                     <div class="col-lg-8">
                         <input type="text" name="descricao" class="form-control" placeholder="Descrição" value="{{ (@$data_aux->descricao) ? $data_aux->descricao : '' }}">
                         <div class="invalid-feedback">Campo obrigatório!</div>

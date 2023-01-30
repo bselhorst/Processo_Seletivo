@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\AuxiliarMunicipio;
 use App\Models\ProcessoSeletivo;
 use App\Models\ProcessoSeletivoCurso;
 
@@ -32,8 +33,10 @@ class ProcessoSeletivoCursoController extends Controller
      */
     public function create($id_processo_seletivo)
     {
+        $municipios = AuxiliarMunicipio::orderBy('nome')->get();
         return view('processoSeletivo.cursos.form', [
             'id_processo_seletivo' => $id_processo_seletivo,
+            'municipios' => $municipios,
         ]);
     }
 
@@ -46,14 +49,16 @@ class ProcessoSeletivoCursoController extends Controller
     public function store(Request $request, $id_processo_seletivo)
     {
         $request["id_processo_seletivo"] = $id_processo_seletivo;
+        ($request["salario"] == null)? $request["salario"] = 0.00 : '';
         $validatedData = $request->validate([
             'id_processo_seletivo' => 'required',
-            'municipio' => 'required',
+            'id_municipio' => 'required',
             'titulo' => 'required',
-            'descricao' => 'required',
-            'salario' => 'required',
+            'descricao' => '',
+            'salario' => '',
+            'carga_horaria' => 'required',
             'vagas' => 'required',
-        ]);
+        ]);        
         $new = ProcessoSeletivoCurso::create($validatedData);
         return redirect()->route("pc.index", $id_processo_seletivo)->with('success', 'Registro adicionado com sucesso!');
     }
@@ -77,10 +82,12 @@ class ProcessoSeletivoCursoController extends Controller
      */
     public function edit($id_processo_seletivo, $id)
     {
+        $municipios = AuxiliarMunicipio::orderBy('nome')->get();
         $data = ProcessoSeletivoCurso::findOrFail($id);
         return view('processoSeletivo.cursos.form', [
             'id_processo_seletivo' => $id_processo_seletivo,
             'data' => $data,
+            'municipios' => $municipios
         ]);
     }
 
@@ -93,11 +100,13 @@ class ProcessoSeletivoCursoController extends Controller
      */
     public function update(Request $request, $id_processo_seletivo, $id)
     {
+        ($request["salario"] == null)? $request["salario"] = 0.00 : '';
         $validatedData = $request->validate([
-            'municipio' => 'required',
+            'id_municipio' => 'required',
             'titulo' => 'required',
-            'descricao' => 'required',
-            'salario' => 'required',
+            'descricao' => '',
+            'salario' => '',
+            'carga_horaria' => 'required',
             'vagas' => 'required',
         ]);
         ProcessoSeletivoCurso::whereId($id)->update($validatedData);

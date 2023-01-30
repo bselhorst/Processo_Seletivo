@@ -23,6 +23,7 @@
 	<script src="{{ asset('assets/js/vendor/tables/datatables/datatables.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/uploaders/fileinput/fileinput.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/notifications/bootbox.min.js') }}"></script>
+	<script src="{{ asset('assets/js/vendor/forms/selects/select2.min.js') }}"></script>
 
 	<!-- Theme JS files -->
 	<script src="{{ asset('assets/js/app.js') }}"></script>
@@ -31,6 +32,7 @@
     <script src="{{ asset('assets/demo/pages/form_validation_library.js') }}"></script>
 	<script src="{{ asset('assets/demo/pages/datatables_basic.js') }}"></script>
 	<script src="{{ asset('assets/demo/pages/components_modals.js') }}"></script>
+	<script src="{{ asset('assets/demo/pages/form_select2.js') }}"></script>
 	<!-- /theme JS files -->
 
 </head>

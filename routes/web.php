@@ -90,6 +90,7 @@ Route::get('/edital/{id}', function ($id) {
     return view('edital', [
         'data' => ProcessoSeletivo::findOrFail($id),
         'data_curso' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->get(),
+        'salario' => ProcessoSeletivoCurso::where("salario", ">", 0)->get(),
     ]);
 })->name('edital');
 

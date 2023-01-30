@@ -16,10 +16,11 @@ return new class extends Migration
         Schema::create('processo_seletivo_cursos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_processo_seletivo')->constrained('processo_seletivos')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->text('municipio');
+            $table->foreignId('id_municipio')->constrained('auxiliar_municipios')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('titulo');
-            $table->text('descricao');
-            $table->decimal('salario', 9,3);
+            $table->text('descricao')->nullable();
+            $table->decimal('salario', 9,2);
+            $table->integer('carga_horaria');
             $table->integer('vagas');
             $table->timestamps();
         });
