@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="card">
-    <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" novalidate>
+    <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" enctype='multipart/form-data' novalidate>
         @csrf
         <div class="card-body">
 			<div class="fw-bold border-bottom pb-2 mb-3">Dados do Processo Seletivo</div>            
@@ -67,14 +67,14 @@
 
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Bairro</label>
-				<div class="col-lg-9">
+				<div class="col-lg-4">
 					<input type="text" name="bairro" class="form-control" placeholder="Ex: Centro" aria-invalid="false">
 				</div>
 			</div>
 
 			<div class="row mb-3">
 				<label class="col-form-label col-lg-3">Número para contato (DDD + número (somente número)) <span class="text-danger">*</span></label>
-				<div class="col-lg-9">
+				<div class="col-lg-3">
 					<input type="text" name="numero_contato" class="form-control" required="" placeholder="68999999999">
 				</div>
 			</div>
@@ -95,7 +95,7 @@
 				<div class="card-body">
 					<p class="mb-3">Exemplo de documentos (com foto): RG, Passaporte, Carteira de Trabalho.</p>					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_documento" class="file-input-required" multiple="multiple">
+					<input type="file" name="anexo_documento[]" class="file-input-required" multiple>
 				</div>
 			</div>
 
@@ -105,7 +105,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_titulacao" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_titulacao[]" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
@@ -115,7 +115,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_qualificacao" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_qualificacao[]" class="file-input" multiple="multiple">
 				</div>
 			</div>
 
@@ -125,7 +125,7 @@
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_experiencia_profissional" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_experiencia_profissional[]" class="file-input" multiple="multiple">
 				</div>
 			</div>
 

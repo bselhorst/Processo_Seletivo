@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ProcessoSeletivo;
+use App\Models\ProcessoSeletivoCurso;
 use App\Models\ProcessoSeletivoInscricao;
+
+use Illuminate\Support\Facades\DB;
 
 class ProcessoSeletivoInscricaoController extends Controller
 {
@@ -13,9 +17,21 @@ class ProcessoSeletivoInscricaoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id_processo_seletivo)
     {
-        //
+        $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+        // $data = DB::table('processo_seletivo_inscricaos')
+        //             ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+        //             ->select('processo_seletivo_inscricaos.id as id', 'processo_seletivo_inscricaos.id_tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome')
+        //             ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+        //             ->orderBy('processo_seletivo_inscricaos.nome')
+        //             ->paginate(15);
+        $data = ProcessoSeletivoInscricao::orderBy('nome')->paginate(15);
+        return view('processoSeletivo.inscricoes.index', [
+            'id_processo_seletivo' => $id_processo_seletivo,
+            'data' => $data,
+            'processo_seletivo' => $processo_seletivo,
+        ]);
     }
 
     /**
@@ -36,24 +52,54 @@ class ProcessoSeletivoInscricaoController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
-        // $validatedData = $request->validate([
-        //     'id_processo_seletivo_curso' => 'required',
-        //     'id_tipo_documento' => 'required',
-        //     'numero_documento' => 'required',
-        //     'nome' => 'required',
-        //     'endereco' => 'required',
-        //     'bairro' => '',
-        //     'numero_contato' => 'required',
-        //     'email' => '',
-        //     'anexo_documento' => 'required',
-        //     'anexo_titulacao' => '',
-        //     'anexo_qualificacao' => '',
-        //     'anexo_experiencia_profissional' => '',
-        // ]);
-        // $new = ProcessoSeletivo::create($validatedData);
-        // $request->file->storeAs("public/inscricao/$new->id", 'edital.pdf');
-        // return redirect()->route("inscricao")->with('success', 'Registro adicionado com sucesso!');
+        $validatedData = $request->validate([
+            'id_processo_seletivo_curso' => 'required',
+            'id_tipo_documento' => 'required',
+            'numero_documento' => 'required',
+            'nome' => 'required',
+            'endereco' => 'required',
+            'bairro' => '',
+            'numero_contato' => 'required',
+            'email' => '',
+            'anexo_documento' => 'required',
+            'anexo_titulacao' => '',
+            'anexo_qualificacao' => '',
+            'anexo_experiencia_profissional' => '',
+        ]);
+        $new = ProcessoSeletivoInscricao::create($validatedData);
+        if ($request->file('anexo_documento')){
+            foreach($request->file('anexo_documento') as $key => $file)
+            {
+                // $fileName = time().rand(1,99).'.'.$file->extension();
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/documentos", "$fileName");   
+            }
+        }
+
+        if ($request->file('anexo_titulacao')){
+            foreach($request->file('anexo_titulacao') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/titulacao", "$fileName");   
+            }
+        }
+
+        if ($request->file('anexo_qualificacao')){
+            foreach($request->file('anexo_qualificacao') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/qualificacao", "$fileName");   
+            }
+        }
+
+        if ($request->file('anexo_experiencia_profissional')){
+            foreach($request->file('anexo_experiencia_profissional') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");  
+            }
+        }
+        return redirect()->route("inscricao")->with('success', 'Registro adicionado com sucesso!');
     }
 
     /**
@@ -100,4 +146,44 @@ class ProcessoSeletivoInscricaoController extends Controller
     {
         //
     }
+
+    public function indexSearch(Request $request, $id_processo_seletivo)
+    {
+        $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+        // $data = DB::table('processo_seletivo_inscricaos')
+        //             ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+        //             ->select('processo_seletivo_inscricaos.id as id', 'processo_seletivo_inscricaos.id_tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome')
+        //             ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+        //             ->where('nome', 'LIKE', "%".$request->pesquisa."%")
+        //             ->orderBy('processo_seletivo_inscricaos.nome')
+        //             ->paginate(15);
+        $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
+        return view('processoSeletivo.inscricoes.index', [
+            'id_processo_seletivo' => $id_processo_seletivo,
+            'data' => $data,
+            'processo_seletivo' => $processo_seletivo,
+        ]);
+    }
+
+    public function detalhes($id_processo_seletivo, $id){
+        // $data = DB::table('processo_seletivo_inscricaos')
+        //             ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+        //             ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
+        //             ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
+        //             ->select('processo_seletivo_inscricaos.id as id', 'processo_seletivos.titulo as processo_seletivo', 'processo_seletivo_cursos.titulo as vaga', 'processo_seletivo_inscricaos.id_tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricaos.endereco', 'processo_seletivo_inscricaos.bairro', 'processo_seletivo_inscricaos.numero_contato', 'processo_seletivo_inscricaos.email', 'auxiliar_tipo_documentos.nome as documento')
+        //             ->where('processo_seletivo_inscricaos.id', $id)
+        //             ->orderBy('processo_seletivo_inscricaos.nome')
+        //             ->first();
+        $data = ProcessoSeletivoInscricao::findOrFail($id);
+        // $data = ProcessoSeletivoInscricao::findOrFail($id);
+        return view('processoSeletivo.inscricoes.detalhes', [
+            'id_processo_seletivo' => $id_processo_seletivo,
+            'data' => $data,
+        ]);
+    }
+
+    public function downloadArquivo($path){
+        return Storage::download($path);
+    }
+    
 }

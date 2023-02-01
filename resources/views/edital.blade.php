@@ -29,7 +29,7 @@
                     <h6>Descrição</h6>
                     <p style="text-align: justify">{{ $data->descricao }}</p>
                 </div>
-                @if (count(@$data_curso) > 0)
+                @if (count(@$data->cursos) > 0)
                     <h6>Vagas</h6>
                     <div class="card">        
                         <table class="table">
@@ -43,23 +43,31 @@
                                         <th>Salário</th>
                                     @endif
                                     <th>Vagas</th>
-                                    <th class="text-center">Ações</th>
+                                    @if (date(strtotime($data->data_encerramento)) >= time())
+                                        @if (date(strtotime($data->data_abertura)) <= time())
+                                            <th class="text-center">Ações</th>
+                                        @endif
+                                    @endif 
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data_curso as $item)
+                                @foreach ($data->cursos as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ App\Models\AuxiliarMunicipio::with('municipio')->findOrFail($item->id)->nome }}</td>
+                                        <td>{{ $item->municipio->nome }}</td>
                                         <td>{{ $item->titulo }}</td>
                                         <td>{{ $item->descricao }}</td>
                                         @if (count($salario) > 0)
                                             <td>{{ $item->salario }}</td>
                                         @endif                                        
                                         <td>{{ $item->vagas }}</td>
-                                        <td class="text-center">
-                                            <a href="{{ route('inscricao', ['id' => $data->id,'id_curso' => $item->id]) }}">Inscrição</a>
-                                        </td>
+                                        @if (date(strtotime($data->data_encerramento)) >= time())
+                                            @if (date(strtotime($data->data_abertura)) <= time())
+                                                <td class="text-center">                                          
+                                                    <a href="{{ route('inscricao', ['id' => $data->id,'id_curso' => $item->id]) }}">Inscrição</a>                                                                                                                                 
+                                                </td>
+                                            @endif
+                                        @endif 
                                     </tr>
                                 @endforeach
                             </tbody>

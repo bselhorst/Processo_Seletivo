@@ -67,8 +67,11 @@
                                     <a href="#" class="text-body" data-bs-toggle="dropdown">
                                         <i class="ph-list"></i>
                                     </a>
-
                                     <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ route('pi.index', $item->id) }}" class="dropdown-item">
+                                            <i class="ph-identification-badge me-2"></i>
+                                            Inscrições
+                                        </a>
                                         <a href="{{ route('pc.index', $item->id) }}" class="dropdown-item">
                                             <i class="ph-graduation-cap me-2"></i>
                                             Cursos

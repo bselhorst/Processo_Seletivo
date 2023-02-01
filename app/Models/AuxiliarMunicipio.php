@@ -11,8 +11,4 @@ class AuxiliarMunicipio extends Model
     use HasFactory;
     protected $fillable = ['nome', 'descricao'];
 
-    public function municipio(){
-        return $this->hasMany(ProcessoSeletivoCurso::class, 'id_municipio');
-    }
-
 }

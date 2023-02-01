@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('endereco');
             $table->string('bairro')->nullable();
             $table->string('numero_contato');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }

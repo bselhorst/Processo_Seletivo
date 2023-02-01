@@ -10,7 +10,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0">Processos Seletivos - Cursos</h5>
+        <h5 class="mb-0">Processo Seletivo - {{ $processo_seletivo->titulo }}</h5>
     </div>
     
     <div class="card border-top border-top-width-1 border-bottom border-bottom-width-1 rounded-0" style="margin: 10px">
@@ -18,11 +18,11 @@
             <h6 class="mb-0">Filtro</h6>
         </div>
         
-        <form method="POST" action="{{ route('pc.indexSearch', $id_processo_seletivo) }}">
+        <form method="POST" action="{{ route('pi.indexSearch', $id_processo_seletivo) }}">
             @csrf
             <div class="d-flex justify-content-center border rounded p-2">
                 <div class="col-lg-5 py-2 px-3 rounded">
-                    <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisa por título">
+                    <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisa por nome">
                 </div>
                 <div class="col-lg-1 py-2 px-3 rounded">
                     <button type="submit" class="btn btn-outline-light">Pesquisar</button>
@@ -31,17 +31,14 @@
         </form>
     </div>
 
-    <a href="{{ route('pc.create', $id_processo_seletivo) }}" class="btn btn-outline-success col-lg-1" style="margin-left: 10px">Cadastrar</a>
     <div class="card" style="margin: 10px">        
         <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Município</th>
-                    <th>Titulo</th>
-                    <th>Descrição</th>
-                    <th>Salário</th>
-                    <th>Vagas</th>
+                    <th>Tipo de Documento</th>
+                    <th>Número</th>
+                    <th>Nome</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
@@ -49,34 +46,19 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->municipio->nome }}</td>
-                        <td>{{ $item->titulo }}</td>
-                        <td>{{ $item->descricao }}</td>
-                        <td>{{ $item->salario }}</td>
-                        <td>{{ $item->vagas }}</td>
+                        <td>{{ $item->tipo_documento->nome }}</td>
+                        <td>{{ $item->numero_documento }}</td>
+                        <td>{{ $item->nome }}</td>
                         <td class="text-center">
                             <div class="d-inline-flex">
                                 <div class="dropdown">
                                     <a href="#" class="text-body" data-bs-toggle="dropdown">
                                         <i class="ph-list"></i>
                                     </a>
-
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="#" class="dropdown-item">
-                                            <i class="ph-graduation-cap me-2"></i>
-                                            Cursos
-                                        </a>
-                                        <a href="{{ route('pc.edit', [$id_processo_seletivo, $item->id]) }}" class="dropdown-item">
-                                            <i class="ph-note-pencil me-2"></i>
-                                            Editar Curso
-                                        </a>
-                                        <form id="delete_form" method="POST" action="{{ route('pc.destroy', [$id_processo_seletivo, $item->id]) }}">
-                                        @csrf
-                                        @method('delete')
-                                        <input type="hidden" name="delete_data" />
-                                        <a href="#" class="dropdown-item text-danger" onClick="document.getElementById('delete_form').submit();">
-                                            <i class="ph-trash me-2"></i>
-                                            Excluir Curso
+                                        <a href="{{ route('pi.detalhes', [$id_processo_seletivo, $item->id]) }}" class="dropdown-item">
+                                            <i class="ph-check-square-offset me-2"></i>
+                                            Ver Inscrição
                                         </a>
                                     </div>
                                 </div>

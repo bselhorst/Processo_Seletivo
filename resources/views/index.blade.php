@@ -32,7 +32,7 @@
 							@if (date(strtotime($item->data_abertura)) <= time())
 								<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center">
 									<ul class="list-inline mb-0">
-										<li class="list-inline-item"><i class="ph-users me-1"></i> {{ App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->sum('vagas') }}</li>
+										{{-- <li class="list-inline-item"><i class="ph-users me-1"></i> {{ App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->sum('vagas') }}</li> --}}
 										<li class="list-inline-item"><i class="ph-book me-1"></i> {{ count(App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->get()) }}</li>
 									</ul>
 
@@ -46,7 +46,7 @@
 							@else
 								<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center bg-success bg-opacity-10">
 									<ul class="list-inline mb-0">
-										<li class="list-inline-item"><i class="ph-users me-1"></i> {{ App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->sum('vagas') }}</li>
+										{{-- <li class="list-inline-item"><i class="ph-users me-1"></i> {{ App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->sum('vagas') }}</li> --}}
 										<li class="list-inline-item"><i class="ph-book me-1"></i> {{ count(App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->get()) }}</li>
 									</ul>
 
@@ -63,8 +63,21 @@
 								</div>
 							@endif
 						@else
-							<div class="card-footer bg-danger bg-opacity-10" style="text-align: center">
-								<b>ENCERRADO</b>
+							<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center bg-danger bg-opacity-10">
+								<ul class="list-inline mb-0">
+									<li class="list-inline-item"><i class="ph-book me-1"></i> {{ count(App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->get()) }}</li>
+								</ul>
+
+								<div class="mt-2 mt-sm-0">
+									<b>ENCERRADO</b>
+								</div>
+
+								<div class="mt-2 mt-sm-0">
+									<a href="{{ route('edital', $item->id) }}">
+										Acessar
+										<i class="ph-arrow-right ms-2"></i>
+									</a>
+								</div>
 							</div>
 						@endif
 					</div>

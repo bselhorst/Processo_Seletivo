@@ -11,6 +11,7 @@ use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
 use App\Models\ProcessoSeletivoCurso;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,19 @@ Route::prefix('processoseletivo')->group(function () {
         Route::patch('/{id}', [ProcessoSeletivoCursoController::class, 'update'])->middleware(['auth', 'verified'])->name('pc.update');
         Route::delete('/{id}', [ProcessoSeletivoCursoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('pc.destroy');
     });
+
+    //CURSOS COM UM PREFIXO DE CURSOS
+    Route::prefix('{id_processo_seletivo}/inscricoes')->group(function () {
+        Route::get('/', [ProcessoSeletivoInscricaoController::class, 'index'])->middleware(['auth', 'verified'])->name('pi.index');
+        Route::post('/search', [ProcessoSeletivoInscricaoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pi.indexSearch');
+        Route::get('/{id}', [ProcessoSeletivoInscricaoController::class, 'detalhes'])->middleware(['auth', 'verified'])->name('pi.detalhes');
+        Route::get('/{path}', [ProcessoSeletivoInscricaoController::class, 'downloadArquivo'])->middleware(['auth', 'verified'])->name('pi.download.arquivo');
+        // Route::get('/form', [ProcessoSeletivoInscricaoController::class, 'create'])->middleware(['auth', 'verified'])->name('pc.create');
+        // Route::get('/form/{id}', [ProcessoSeletivoInscricaoController::class, 'edit'])->middleware(['auth', 'verified'])->name('pc.edit');
+        // Route::post('/', [ProcessoSeletivoInscricaoController::class, 'store'])->middleware(['auth', 'verified'])->name('pc.store');
+        // Route::patch('/{id}', [ProcessoSeletivoInscricaoController::class, 'update'])->middleware(['auth', 'verified'])->name('pc.update');
+        // Route::delete('/{id}', [ProcessoSeletivoInscricaoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('pc.destroy');
+    });
 });
 
 //ROTA DO EDITAL
@@ -71,7 +85,7 @@ Route::get('/edital/{id}', function ($id) {
     return view('edital', [
         'data' => ProcessoSeletivo::findOrFail($id),
         'data_curso' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->get(),
-        'salario' => ProcessoSeletivoCurso::where("salario", ">", 0)->get(),
+        'salario' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->where("salario", ">", 0)->get(),
     ]);
 })->name('edital');
 
@@ -82,12 +96,14 @@ Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = nul
                     ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
                     ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
                     ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
+                    ->whereRaw("processo_seletivos.data_abertura < STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')" , Carbon::now('America/Rio_branco')->format('Y-m-d H:i'))
+                    ->whereRaw("processo_seletivos.data_encerramento >= STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')" , Carbon::now('America/Rio_branco')->format('Y-m-d H:i'))
                     ->get(),
         'id_vaga' => $id_curso,
         'tipo_documentos' => AuxiliarTipoDocumento::orderBy("nome")->get(),
     ]);
 })->name('inscricao');
-Route::post('/inscricao', [ProcessoSeletivoInscricaoController::class, 'store'])->middleware(['auth', 'verified'])->name('inscricao.store');
+Route::post('/inscricao', [ProcessoSeletivoInscricaoController::class, 'store'])->name('inscricao.store');
 
 
 
