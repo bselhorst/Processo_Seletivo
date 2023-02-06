@@ -5,8 +5,14 @@
     <div class="card-header d-lg-flex">
         <h5 class="mb-0">{{ $data->nome }} #{{ $data->id }}</h5>
     </div>
-    <form action="#" method="POST">
+
+    <form action="{{ (@$data_nota) ? route('pn.update', [$id_processo_seletivo, $data_nota->id]) : route('pn.store', $id_processo_seletivo) }}" method="POST">
         @csrf
+        @if (@$data_nota)
+            @method('patch')
+        @endif
+        <input type="hidden" name="id_processo_seletivo" value="{{ $id_processo_seletivo }}" />
+        <input type="hidden" name="id_inscricao" value="{{ $data->id }}" />
         <div class="tab-content">
             <div class="tab-pane fade show active" id="course-overview">
                 <div class="card-body">
@@ -60,11 +66,8 @@
                         <div class="col-lg-1" style="padding-top: 10px">
                             <div class="mb-4">
                                 <label class="form-label">Pontuação</label>
-                                @if (@$anexo_titulacao)
-                                    <input type="text" class="form-control" placeholder="">
-                                @else
-                                    <input type="text" class="form-control" value=0 placeholder="" disabled>
-                                @endif
+                                {{-- <input type="number" min=0 {{ ($anexo_titulacao)?'':'max=0' }} name="nota_titulacao" class="form-control" value="0"> --}}
+                                <input type="number" min=0 name="nota_titulacao" class="form-control" value="{{ @$data_nota? $data_nota->nota_titulacao : 0 }}">
                                 <span class="form-text"></span>
                             </div>
                         </div>
@@ -85,11 +88,8 @@
                         <div class="col-lg-1" style="padding-top: 10px">
                             <div class="mb-4">
                                 <label class="form-label">Pontuação</label>
-                                @if (@$anexo_qualificacao)
-                                    <input type="text" class="form-control" placeholder="">
-                                @else
-                                    <input type="text" class="form-control" value=0 placeholder="" disabled>
-                                @endif
+                                {{-- <input type="number" min=0 {{ ($anexo_qualificacao)?'':'max=0' }} name="nota_qualificacao" class="form-control" value="0"> --}}
+                                <input type="number" min=0 name="nota_qualificacao" class="form-control" value="{{ (@$data_nota)? $data_nota->nota_qualificacao : '0' }}">
                                 <span class="form-text"></span>
                             </div>
                         </div>
@@ -109,11 +109,17 @@
                         <div class="col-lg-1" style="padding-top: 10px">
                             <div class="mb-4">
                                 <label class="form-label">Pontuação</label>
-                                @if (@$anexo_experiencia_profissional)
-                                    <input type="text" class="form-control" placeholder="">
-                                @else
-                                    <input type="text" class="form-control" value=0 placeholder="" disabled>
-                                @endif
+                                {{-- <input type="number" min=0 {{ ($anexo_experiencia_profissional)?'':'max=0' }} name="nota_exp_profissional" class="form-control" value="0"> --}}
+                                <input type="number" min=0 name="nota_exp_profissional" class="form-control" value="{{ (@$data_nota)? $data_nota->nota_exp_profissional : '0' }}">
+                                <span class="form-text"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-1 mb-4">
+                        <h6>Mensagem (Caso tenha indeferimento)</h6>
+                        <div class="col-lg-8" style="padding-top: 10px">
+                            <div class="mb-4">
+                                <input type="text" name="mensagem" class="form-control" value="{{ @$data_nota? $data_nota->nota_mensagem : '' }}" placeholder="">
                                 <span class="form-text"></span>
                             </div>
                         </div>
@@ -122,8 +128,8 @@
             </div>
         </div>
         <div class="card-footer">
-            <button class="btn btn-outline-danger">Indeferir Inscrição</button>
-            <button class="btn btn-outline-success">Deferir Inscrição</button>
+            <input class="btn btn-outline-danger" type="submit" name="status" value="Indeferido" />
+            <input class="btn btn-outline-success" type="submit" name="status" value="Deferido" />
         </div>
     </form>
 </div>

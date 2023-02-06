@@ -39,6 +39,7 @@
                     <th>Tipo de Documento</th>
                     <th>Número</th>
                     <th>Nome</th>
+                    <th>Status</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
@@ -46,9 +47,20 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->tipo_documento->nome }}</td>
+                        <td>{{ $item->tipo_documento }}</td>
                         <td>{{ $item->numero_documento }}</td>
                         <td>{{ $item->nome }}</td>
+                        <td>
+                            @if (@$item->status)
+                                @if ($item->status == 'Deferido')
+                                    <span class="badge bg-success bg-opacity-10 text-success">Deferido</span>
+                                @else
+                                    <span class="badge bg-success bg-opacity-10 text-danger">Indeferido</span>
+                                @endif
+                            @else
+                                <span class="badge bg-success bg-opacity-10 text-warning">A ser analisado</span>
+                            @endif
+                        </td>
                         <td class="text-center">
                             <div class="d-inline-flex">
                                 <div class="dropdown">

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ProcessoSeletivoCurso;
+use App\Models\ProcessoSeletivoInscricaoNota;
 use App\Models\AuxiliarTipoDocumento;
 
 class ProcessoSeletivoInscricao extends Model
@@ -18,5 +18,9 @@ class ProcessoSeletivoInscricao extends Model
 
     public function tipo_documento(){
         return $this->belongsTo(AuxiliarTipoDocumento::class, 'id_tipo_documento');
+    }
+
+    public function notas(){
+        return $this->hasOne(ProcessoSeletivoInscricaoNota::class, 'id_inscricao');
     }
 }

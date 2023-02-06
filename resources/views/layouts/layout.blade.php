@@ -159,6 +159,14 @@
 								<li class="nav-item"><a href="../../../LTR/material/full/index.html" class="nav-link disabled">Cursos <span class="badge align-self-center ms-auto">Coming soon</span></a></li>
 							</ul>
 						</li>
+						<li class="nav-item">
+							<a href="/register" class="nav-link">
+								<i class="ph-user-plus"></i>
+								<span>
+									Adicionar Usuário
+								</span>
+							</a>
+						</li>
 						<!-- /page kits -->
 					</ul>
 				</div>

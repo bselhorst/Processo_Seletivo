@@ -6,10 +6,13 @@ use App\Http\Controllers\AuxiliarTipoDocumentoController;
 use App\Http\Controllers\ProcessoSeletivoController;
 use App\Http\Controllers\ProcessoSeletivoCursoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoController;
+use App\Http\Controllers\ProcessoSeletivoInscricaoNotaController;
 use Illuminate\Support\Facades\Route;
 use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
 use App\Models\ProcessoSeletivoCurso;
+use App\Models\ProcessoSeletivoInscricao;
+use App\Models\ProcessoSeletivoInscricaoNota;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -54,6 +57,7 @@ Route::prefix('processoseletivo')->group(function () {
     Route::post('/', [ProcessoSeletivoController::class, 'store'])->middleware(['auth', 'verified'])->name('ps.store');
     Route::patch('/{id}', [ProcessoSeletivoController::class, 'update'])->middleware(['auth', 'verified'])->name('ps.update');
     Route::delete('/{id}', [ProcessoSeletivoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('ps.destroy');
+    Route::get('/{id}/resultado', [ProcessoSeletivoController::class, 'resultado'])->middleware(['auth', 'verified'])->name('ps.resultado');
 
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/cursos')->group(function () {
@@ -69,6 +73,8 @@ Route::prefix('processoseletivo')->group(function () {
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/inscricoes')->group(function () {
         Route::get('/', [ProcessoSeletivoInscricaoController::class, 'index'])->middleware(['auth', 'verified'])->name('pi.index');
+        Route::post('/', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
+        Route::patch('/detalhes/{id}', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
         Route::post('/search', [ProcessoSeletivoInscricaoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pi.indexSearch');
         Route::get('/{id}', [ProcessoSeletivoInscricaoController::class, 'detalhes'])->middleware(['auth', 'verified'])->name('pi.detalhes');
         Route::get('/{path}', [ProcessoSeletivoInscricaoController::class, 'downloadArquivo'])->middleware(['auth', 'verified'])->name('pi.download.arquivo');
@@ -105,26 +111,15 @@ Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = nul
 })->name('inscricao');
 Route::post('/inscricao', [ProcessoSeletivoInscricaoController::class, 'store'])->name('inscricao.store');
 
-
-
-//CURSOS COM UM PREFIXO DE CURSOS
-// Route::get('/processoseletivo/{id_processoseletivo}/cursos', [ProcessoSeletivoCursoController::class, 'index'])->middleware(['auth', 'verified'])->name('psc2.index');
-// Route::post('/processoseletivo/{id_processoseletivo}/curso_search', [ProcessoSeletivoCursoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('psc.indexSearch');
-// Route::get('/processoseletivo/{id_processoseletivo}/curso_form', [ProcessoSeletivoCursoController::class, 'create'])->middleware(['auth', 'verified'])->name('psc.create');
-// Route::get('/processoseletivo/{id_processoseletivo}/curso_form/{id}', [ProcessoSeletivoCursoController::class, 'edit'])->middleware(['auth', 'verified'])->name('psc.edit');
-// Route::post('/processoseletivo/{id_processoseletivo}/curso', [ProcessoSeletivoCursoController::class, 'store'])->middleware(['auth', 'verified'])->name('psc.store');
-// Route::patch('/processoseletivo/{id_processoseletivo}/curso/{id}', [ProcessoSeletivoCursoController::class, 'update'])->middleware(['auth', 'verified'])->name('psc.update');
-// Route::delete('/processoseletivo/{id_processoseletivo}/curso/{id}', [ProcessoSeletivoCursoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('psc.destroy');
+// //ROTA RESULTADO
+// Route::get("/resultado", function(){
+//     $data = ProcessoSeletivoInscricao::whereRelation('curso.municipio', 'id', 2)->get();
+//     return $data;
+// });
 
 Route::get('/{id}/downloadEdital', [ProcessoSeletivoController::class, 'downloadEdital'])->middleware(['auth', 'verified'])->name('download.edital');
 
 Route::get('/cursos', [ProcessoSeletivoCursoController::class, 'index'])->middleware(['auth', 'verified'])->name('psc.index');
-
-Route::get('/teste', function(){
-    return view('teste', [
-            'user' => Auth::user(),
-        ]);
-});
 
 Route::get('/perfil', function(){
     return view('profile.perfil', [
@@ -138,17 +133,13 @@ Route::get('/', function () {
     ]);
 });
 
-
-
-
-
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('ps.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard2', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard2');
+Route::get('/register', function () {
+    return view('auth.register');
+})->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
