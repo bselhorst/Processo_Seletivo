@@ -103,7 +103,7 @@ class ProcessoSeletivoInscricaoController extends Controller
                 $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");  
             }
         }
-        return redirect()->route("inscricao")->with('success', 'Registro adicionado com sucesso!');
+        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso!');
     }
 
     /**

@@ -5,7 +5,13 @@
 @stop
 
 @section('content')
-<div class="card">
+@if (Session::has('success'))
+	<div class="alert alert-success alert-dismissible fade show">
+		{{ Session::get('success') }}
+		<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+	</div>
+@endif
+<div class="card">	
     <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" enctype='multipart/form-data' novalidate>
         @csrf
         <div class="card-body">
@@ -90,42 +96,42 @@
 
 			<div class="card">
 				<div class="card-header">
-					<h5 class="mb-0">Documento com foto (RG, Passaporte, Carteira de Trabalho)</h5>
+					<h5 class="mb-0">Documento com foto (RG, Passaporte, Carteira de Trabalho) <code>(PDF, JPG, JPEG)</code></h5>
 				</div>
 				<div class="card-body">
 					<p class="mb-3">Exemplo de documentos (com foto): RG, Passaporte, Carteira de Trabalho.</p>					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_documento[]" class="file-input-required" multiple>
+					<input type="file" name="anexo_documento[]" class="file-input-required" accept=".jpg,.jpeg,.pdf" multiple>
 				</div>
 			</div>
 
 			<div class="card">
 				<div class="card-header">
-					<h5 class="mb-0">Titulação (Mestrado, dourotado)</h5>
+					<h5 class="mb-0">Titulação (Mestrado, dourotado) <code>(PDF, JPG, JPEG)</code></h5>
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_titulacao[]" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_titulacao[]" class="file-input" multiple="multiple" accept=".jpg,.png,.jpeg,.pdf">
 				</div>
 			</div>
 
 			<div class="card">
 				<div class="card-header">
-					<h5 class="mb-0">Qualificação e aperfeiçoamento profissional</h5>
+					<h5 class="mb-0">Qualificação e aperfeiçoamento profissional <code>(PDF, JPG, JPEG)</code></h5>
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_qualificacao[]" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_qualificacao[]" class="file-input" multiple="multiple" accept=".jpg,.png,.jpeg,.pdf">
 				</div>
 			</div>
 
 			<div class="card">
 				<div class="card-header">
-					<h5 class="mb-0">Experiência Profissional</h5>
+					<h5 class="mb-0">Experiência Profissional <code>(PDF, JPG, JPEG)</code></h5>
 				</div>
 				<div class="card-body">					
 					<p class="fw-semibold">Pré visualização</p>
-					<input type="file" name="anexo_experiencia_profissional[]" class="file-input" multiple="multiple">
+					<input type="file" name="anexo_experiencia_profissional[]" class="file-input" multiple="multiple" accept=".jpg,.png,.jpeg,.pdf">
 				</div>
 			</div>
 

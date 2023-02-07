@@ -52,9 +52,9 @@ use Illuminate\Support\Facades\URL;
             </div>
             
             <div class="row mb-3">
-                <label class="col-form-label col-lg-2 offset-lg-1">Edital (PDF) <span class="text-danger">*</span></label>
+                <label class="col-form-label col-lg-2 offset-lg-1">Edital <code>(PDF)</code> <span class="text-danger">*</span></label>
                 <div class="col-lg-6">
-                    <input type="file" name="file" id="file" class="{{ (@$data)? 'file-input': 'file-input-required' }}" data-msg-required="Por favor selecione um arquivo" >
+                    <input type="file" name="file" id="file" class="{{ (@$data)? 'file-input': 'file-input-required' }}" data-msg-required="Por favor selecione um arquivo" accept=".pdf">
                 </div>
                 <div class="col-lg-3">
                     @if (@$data)
