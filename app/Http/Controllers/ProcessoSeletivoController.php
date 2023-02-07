@@ -177,14 +177,14 @@ class ProcessoSeletivoController extends Controller
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
             "Expires"             => "0"
         );
-        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Total');
+        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Total', 'Criado em');
 
         $callback = function() use($data, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
             foreach ($data as $item) {
-                if ($item->inscricao->curso->titulo != @$old_titulo){
+                if ($item->inscricao->curso->titulo != @$old_titulo && @$old_titulo != null){
                     $row['ID']  = '';
                     $row['Município']  = '';
                     $row['Curso']  = '';
@@ -193,7 +193,8 @@ class ProcessoSeletivoController extends Controller
                     $row['Nota Qualificação']    = '';
                     $row['Nota Exp. Profissional']    = '';
                     $row['Total']    = '';
-                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total']));
+                    $row['Criado em']    = '';
+                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em']));
                 }
                 $row['ID']  = $item->id_inscricao;
                 $row['Município']  = $item->inscricao->curso->municipio->nome;
@@ -201,11 +202,12 @@ class ProcessoSeletivoController extends Controller
                 $row['Nome']    = $item->inscricao->nome;
                 $row['Nota Titulação']    = $item->nota_titulacao;
                 $row['Nota Qualificação']    = $item->nota_qualificacao;
-                $row['Nota Exp. Profissional']    = $item->Dnota_exp_profissional;
+                $row['Nota Exp. Profissional']    = $item->nota_exp_profissional;
                 $row['Total']    = $item->total;
+                $row['Criado em']    = $item->inscricao->created_at;
                 $old_titulo = $item->inscricao->curso->titulo;
 
-                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total']));
+                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em']));
             }
 
             fclose($file);

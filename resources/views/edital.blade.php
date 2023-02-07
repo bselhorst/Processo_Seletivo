@@ -60,7 +60,7 @@
                                         @if (count($salario) > 0)
                                             <td>{{ $item->salario }}</td>
                                         @endif                                        
-                                        <td>{{ $item->vagas }}</td>
+                                        <td>{{ ($item->vagas > 0)? $item->vagas : 'Cadastro de Reserva' }}</td>
                                         @if (date(strtotime($data->data_encerramento)) >= time())
                                             @if (date(strtotime($data->data_abertura)) <= time())
                                                 <td class="text-center">                                          
