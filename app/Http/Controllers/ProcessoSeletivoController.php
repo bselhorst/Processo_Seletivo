@@ -164,9 +164,7 @@ class ProcessoSeletivoController extends Controller
             function($item){
                 return $item->inscricao->curso->titulo;
             }
-        )
-        ;
-        // return $data;
+        );
 
         //Exportar o Excel
         $fileName = 'Resultado.csv';        
@@ -214,5 +212,24 @@ class ProcessoSeletivoController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function resultadoForm($id){
+        return view('processoSeletivo.formResultado', [
+            'id_processo_seletivo' => $id,
+        ]);
+    }
+
+    public function resultadoStore(Request $request, $id){
+        if($request->file){
+            $request->file->storeAs("public/editais/$id", 'resultado.pdf');
+        }
+        $request["resultado"] = true;
+        $validatedData = $request->validate([
+            'resultado' => 'required',
+        ]);
+        // return $validatedData;
+        ProcessoSeletivo::whereId($id)->update($validatedData);
+        return redirect()->route("ps.index")->with('success', 'Resultado cadastrado com sucesso!');
     }
 }

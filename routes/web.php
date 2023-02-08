@@ -58,6 +58,8 @@ Route::prefix('processoseletivo')->group(function () {
     Route::patch('/{id}', [ProcessoSeletivoController::class, 'update'])->middleware(['auth', 'verified'])->name('ps.update');
     Route::delete('/{id}', [ProcessoSeletivoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('ps.destroy');
     Route::get('/{id}/resultado', [ProcessoSeletivoController::class, 'resultado'])->middleware(['auth', 'verified'])->name('ps.resultado');
+    Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
+    Route::patch('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoStore'])->middleware(['auth', 'verified'])->name('ps.resultadoStore');
 
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/cursos')->group(function () {

@@ -199,7 +199,7 @@
 				<!-- Footer -->
 				<div class="navbar navbar-sm navbar-footer border-top">
 					<div class="container-fluid">
-						<span>&copy; 2023 <a href="http://ieptec.acre.gov.br">IEPTEC - Instituto Profissional e Tecnológico</a></span>
+						<span>&copy; {{ date('Y') }} <a href="/">IEPTEC - Instituto Profissional e Tecnológico</a></span>
 
 					</div>
 				</div>

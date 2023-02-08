@@ -74,6 +74,17 @@
                         </table>               
                     </div>  
                 @endif
+                @if (@$data)
+                    @if (Storage::get("public/editais/$data->id/resultado.pdf"))
+                        <div class="mt-1 mb-4">
+                            <h6>Resultado</h6>
+                            <a href="/storage/editais/{{$data->id}}/resultado.pdf" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Resultado
+                            </a>
+                        </div>                        
+                    @endif
+                @endif 
             </div>
         </div>
     </div>

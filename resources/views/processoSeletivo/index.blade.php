@@ -44,6 +44,7 @@
                     <th>Descrição</th>
                     <th>Encerramento</th>
                     <th>Status</th>
+                    <th>Resultado</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
@@ -61,6 +62,11 @@
                                 <span class="badge bg-success bg-opacity-10 text-danger">Encerrado</span>
                             @endif                        
                         </td>
+                        <td>@if ($item->resultado == 1)
+                                <span class="badge bg-success bg-opacity-10 text-success">Publicado</span>
+                            @else
+                                <span class="badge bg-success bg-opacity-10 text-danger">Ainda não publicado</span>
+                            @endif </td>
                         <td class="text-center">
                             <div class="d-inline-flex">
                                 <div class="dropdown">
@@ -70,7 +76,11 @@
                                     <div class="dropdown-menu dropdown-menu-end">
                                         <a href="{{ route('ps.resultado', $item->id) }}" class="dropdown-item">
                                             <i class="ph-users-four me-2"></i>
-                                            Resultado
+                                            Download do Resultado
+                                        </a>
+                                        <a href="{{ route('ps.resultadoForm', $item->id) }}" class="dropdown-item">
+                                            <i class="ph-file-plus me-2"></i>
+                                            Publicar Resultado
                                         </a>
                                         <a href="{{ route('pi.index', $item->id) }}" class="dropdown-item">
                                             <i class="ph-identification-badge me-2"></i>
