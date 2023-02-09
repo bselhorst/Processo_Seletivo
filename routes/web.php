@@ -131,7 +131,7 @@ Route::get('/perfil', function(){
 
 Route::get('/', function () {
     return view('index', [
-        'data' => ProcessoSeletivo::orderBy('data_encerramento', 'DESC')->orderBy('data_abertura', 'DESC')->orderBy('id', 'DESC')->paginate(10),
+        'data' => ProcessoSeletivo::orderBy('data_abertura', 'DESC')->orderBy('data_encerramento', 'DESC')->orderBy('id', 'DESC')->paginate(10),
     ]);
 });
 
