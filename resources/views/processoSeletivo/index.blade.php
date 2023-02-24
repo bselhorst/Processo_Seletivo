@@ -186,7 +186,7 @@
                     @for ($i = $data->currentPage()+1; $i <= $data->currentPage()+2; $i++)
                         <li class="page-item">
                             <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
-                        </li>              
+                        </li>
                     @endfor
                 @endif
                 @if ($data->lastPage()-$data->currentPage() >= 4)
