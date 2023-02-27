@@ -3,7 +3,7 @@
 
 <div class="card">
     <div class="card-header d-lg-flex">
-        <h5 class="mb-0">{{ $data->nome }} #{{ $data->id }}</h5>
+        <h5 class="mb-0">{{ $data->nome }} #{{ $data->id }} {!! (@$data_nota)? "<code>(Analisado por: ".$data_nota->analisado_por.")</code>" : '' !!}</h5>
     </div>
 
     <form action="{{ (@$data_nota) ? route('pn.update', [$id_processo_seletivo, $data_nota->id]) : route('pn.store', $id_processo_seletivo) }}" method="POST">

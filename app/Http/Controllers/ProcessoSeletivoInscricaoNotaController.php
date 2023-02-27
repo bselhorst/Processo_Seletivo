@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProcessoSeletivoInscricaoNota;
+use Auth;
 
 class ProcessoSeletivoInscricaoNotaController extends Controller
 {
@@ -45,7 +46,9 @@ class ProcessoSeletivoInscricaoNotaController extends Controller
             'nota_qualificacao' => 'required',
             'nota_exp_profissional' => 'required',
             'mensagem' => '',
+            'analisado_por' => '',
         ]);
+        $validatedData['analisado_por'] = Auth::user()->name;
         // return $validatedData;
         $new = ProcessoSeletivoInscricaoNota::create($validatedData);
         return redirect()->route("pi.index", $id_processo_seletivo)->with('success', 'Registro adicionado com sucesso!');
@@ -89,6 +92,7 @@ class ProcessoSeletivoInscricaoNotaController extends Controller
             'nota_exp_profissional' => 'required',
             'mensagem' => '',
         ]);
+        $validatedData['analisado_por'] = Auth::user()->name;
         // return $validatedData;
         ProcessoSeletivoInscricaoNota::findOrFail($id)->update($validatedData);
         return redirect()->route("pi.index", $id_processo_seletivo)->with('success', 'Registro adicionado com sucesso!');

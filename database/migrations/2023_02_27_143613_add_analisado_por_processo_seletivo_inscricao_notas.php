@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('processo_seletivos', function (Blueprint $table) {
-            $table->boolean('resultado')->after('data_encerramento')->nullable();
+        Schema::table('processo_seletivo_inscricao_notas', function (Blueprint $table) {
+            $table->string('analisado_por')->after('mensagem')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('processo_seletivos', function (Blueprint $table) {
-            $table->dropColumn('resultado');
+        Schema::table('processo_seletivo_inscricao_notas', function (Blueprint $table) {
+            $table->dropColumn('analisado_por');
         });
     }
 };
