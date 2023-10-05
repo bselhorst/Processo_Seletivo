@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('bairro')->nullable();
             $table->string('numero_contato');
             $table->string('email')->nullable();
+	    $table->string('mensagem')->nullable();
             $table->timestamps();
         });
     }
