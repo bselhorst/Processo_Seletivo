@@ -69,7 +69,7 @@
 							Formulários
 						</a>
 
-						<div class="dropdown-menu">		
+						<div class="dropdown-menu">
 							<a href="/inscricao" class="dropdown-item rounded">Inscrição</a>
 						</div>
 					</li>
@@ -133,7 +133,7 @@
 									{{ @Auth::user()->name }}
 								</a>
 
-								<div class="dropdown-menu">		
+								<div class="dropdown-menu">
 									<a href="{{ route('profile.perfil') }}" class="dropdown-item">
 										<i class="ph-identification-card me-2"></i>
 										Perfil
@@ -153,7 +153,7 @@
 								<i class="ph-user me-2"></i>
 								Login
 							</a>
-						@endif						
+						@endif
 					</li>
 				</ul>
 			</div>
@@ -214,5 +214,6 @@
 	</div>
 	<!-- /page content -->
 
+    @stack('scripts')
 </body>
 </html>

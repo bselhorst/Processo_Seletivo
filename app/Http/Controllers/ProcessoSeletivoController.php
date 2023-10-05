@@ -11,7 +11,6 @@ use App\Models\ProcessoSeletivoInscricao;
 use App\Models\ProcessoSeletivoInscricaoNota;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ProcessoSeletivoController extends Controller
 {
@@ -168,20 +167,19 @@ class ProcessoSeletivoController extends Controller
         );
 
         //Exportar o Excel
-        $fileName = 'Resultado.xls';        
+        $fileName = 'Resultado.csv';        
         $headers = array(
-            "Content-type"        => "application/excel",
-            // "Content-type"        => "text/xls",
+            "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$fileName",
             "Pragma"              => "no-cache",
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0",
+            "Expires"             => "0"
         );
-        $columns = array('ID', utf8_decode('Município'), 'Curso', 'Nome', utf8_decode('Nota Titulação'), utf8_decode('Nota Qualificação'), 'Nota Exp. Profissional', 'Total', 'Criado em', 'Mensagem');
+        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Total', 'Criado em', 'Mensagem');
 
         $callback = function() use($data, $columns) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, $columns, "\t", '"');
+            fputcsv($file, $columns);
 
             foreach ($data as $item) {
                 if ($item->inscricao->curso->titulo != @$old_titulo && @$old_titulo != null){
@@ -194,21 +192,8 @@ class ProcessoSeletivoController extends Controller
                     $row['Nota Exp. Profissional']    = '';
                     $row['Total']    = '';
                     $row['Criado em']    = '';
-		            $row['Mensagem']    = '';
-                    $teste = array(
-                        $row['ID'], 
-                        $row['Município'], 
-                        $row['Curso'], 
-                        $row['Nome'], 
-                        $row['Nota Titulação'], 
-                        $row['Nota Qualificação'], 
-                        $row['Nota Exp. Profissional'], 
-                        $row['Total'], 
-                        $row['Criado em'], 
-                        $row['Mensagem']
-                    );
-                    // fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
-                    fputcsv($file, $teste, "\t", '"');
+		    $row['Mensagem']    = '';
+                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
                 }
                 $row['ID']  = $item->id_inscricao;
                 $row['Município']  = $item->inscricao->curso->municipio->nome;
@@ -219,23 +204,10 @@ class ProcessoSeletivoController extends Controller
                 $row['Nota Exp. Profissional']    = $item->nota_exp_profissional;
                 $row['Total']    = $item->total;
                 $row['Criado em']    = $item->inscricao->created_at;
-		        $row['Mensagem']    = $item->mensagem;
+		$row['Mensagem']    = $item->mensagem;
                 $old_titulo = $item->inscricao->curso->titulo;
-                
-                $teste = array(
-                    $row['ID'], 
-                    utf8_decode($row['Município']), 
-                    utf8_decode($row['Curso']), 
-                    utf8_decode($row['Nome']), 
-                    utf8_decode($row['Nota Titulação']), 
-                    utf8_decode($row['Nota Qualificação']), 
-                    utf8_decode($row['Nota Exp. Profissional']), 
-                    utf8_decode($row['Total']), 
-                    utf8_decode($row['Criado em']), 
-                    utf8_decode($row['Mensagem'])
-                );
-                // fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
-                fputcsv($file, $teste, "\t", '"');
+
+                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
             }
 
             fclose($file);

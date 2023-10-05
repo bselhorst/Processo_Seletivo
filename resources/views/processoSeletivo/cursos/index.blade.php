@@ -10,14 +10,14 @@
 
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0">Processos Seletivos - Cursos</h5>
+        <h5 class="mb-0">Processos Seletivos - Perfis Profissionais</h5>
     </div>
-    
+
     <div class="card border-top border-top-width-1 border-bottom border-bottom-width-1 rounded-0" style="margin: 10px">
         <div class="card-header">
             <h6 class="mb-0">Filtro</h6>
         </div>
-        
+
         <form method="POST" action="{{ route('pc.indexSearch', $id_processo_seletivo) }}">
             @csrf
             <div class="d-flex justify-content-center border rounded p-2">
@@ -32,15 +32,15 @@
     </div>
 
     <a href="{{ route('pc.create', $id_processo_seletivo) }}" class="btn btn-outline-success col-lg-1" style="margin-left: 10px">Cadastrar</a>
-    <div class="card" style="margin: 10px">        
+    <div class="card" style="margin: 10px">
         <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Município</th>
-                    <th>Titulo</th>
-                    <th>Descrição</th>
-                    <th>Salário</th>
+                    <th>Área de Atuação</th>
+                    <th>Requisitos Mínimos</th>
+                    <th>Remuneração</th>
                     <th>Vagas</th>
                     <th class="text-center">Ações</th>
                 </tr>
@@ -100,7 +100,7 @@
                     </li>
                     <li class="page-item">
                         <a href="#" class="page-link rounded">...</a>
-                    </li>                   
+                    </li>
                 @endif
                 @if ($data->currentPage() >= 3)
                     @for ($i = $data->currentPage()-2; $i <= $data->currentPage(); $i++)
@@ -112,7 +112,7 @@
                             <li class="page-item">
                                 <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                             </li>
-                        @endif                    
+                        @endif
                     @endfor
                 @else
                     @for ($i = 1; $i <= $data->currentPage(); $i++)
@@ -124,20 +124,20 @@
                             <li class="page-item">
                                 <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                             </li>
-                        @endif                    
+                        @endif
                     @endfor
                 @endif
                 @if ($data->lastPage()-$data->currentPage() < 3)
                     @for ($i = $data->currentPage()+1; $i <= $data->lastPage(); $i++)
                         <li class="page-item">
                             <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
-                        </li>                   
+                        </li>
                     @endfor
                 @else
                     @for ($i = $data->currentPage()+1; $i <= $data->currentPage()+2; $i++)
                         <li class="page-item">
                             <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
-                        </li>              
+                        </li>
                     @endfor
                 @endif
                 @if ($data->lastPage()-$data->currentPage() >= 4)
@@ -146,7 +146,7 @@
                     </li>
                     <li class="page-item">
                         <a href="{{ $data->url($data->lastPage()) }}" class="page-link rounded">{{ $data->lastPage() }}</a>
-                    </li>                   
+                    </li>
                 @endif
                 <li class="page-item {{ ($data->hasMorePages()) ? '' : 'disabled' }}">
                     <a href="{{ $data->nextPageUrl() }}" class="page-link rounded">→</a>
@@ -154,7 +154,7 @@
             </ul>
         </div>
     </div>
-    
+
 </div>
 <!-- /basic datatable -->
 

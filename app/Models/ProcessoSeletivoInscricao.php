@@ -10,7 +10,7 @@ use App\Models\AuxiliarTipoDocumento;
 class ProcessoSeletivoInscricao extends Model
 {
     use HasFactory;
-    protected $fillable = ['id_processo_seletivo_curso', 'id_tipo_documento', 'numero_documento', 'nome', 'endereco', 'bairro', 'numero_contato', 'email'];
+    protected $fillable = ['id_processo_seletivo_curso', 'id_tipo_documento', 'numero_documento', 'nome', 'endereco', 'bairro', 'numero_contato', 'email', 'data_nascimento', 'deficiencia'];
 
     public function curso(){
         return $this->belongsTo(ProcessoSeletivoCurso::class, 'id_processo_seletivo_curso');

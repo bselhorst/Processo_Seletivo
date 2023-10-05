@@ -64,11 +64,16 @@ class ProcessoSeletivoInscricaoController extends Controller
             'endereco' => 'required',
             'bairro' => '',
             'numero_contato' => 'required',
-            'email' => '',
+            'email' => 'required',
+            'data_nascimento' => 'required',
             'anexo_documento' => 'required',
-            'anexo_titulacao' => '',
-            'anexo_qualificacao' => '',
+            'anexo_curriculo' => '',
+            'anexo_titulacao' => 'required',
+            'anexo_qualificacao' => 'required',
+            'anexo_escolaridade' => '',
             'anexo_experiencia_profissional' => '',
+            'anexo_deficiencia' => '',
+            'deficiencia' => 'required',
         ]);
         $new = ProcessoSeletivoInscricao::create($validatedData);
         if ($request->file('anexo_documento')){
@@ -76,7 +81,31 @@ class ProcessoSeletivoInscricaoController extends Controller
             {
                 // $fileName = time().rand(1,99).'.'.$file->extension();
                 $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/documentos", "$fileName");   
+                $file->storeAs("public/inscricao/$new->id/documentos", "$fileName");
+            }
+        }
+
+        if($request->file('anexo_curriculo')){
+            foreach($request->file('anexo_curriculo') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/curriculos", "$fileName");
+            }
+        }
+
+        if($request->file('anexo_deficiencia')){
+            foreach($request->file('anexo_deficiencia') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/deficiencia", "$fileName");
+            }
+        }
+
+        if ($request->file('anexo_escolaridade')){
+            foreach($request->file('anexo_escolaridade') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/escolaridade", "$fileName");
             }
         }
 
@@ -84,7 +113,7 @@ class ProcessoSeletivoInscricaoController extends Controller
             foreach($request->file('anexo_titulacao') as $key => $file)
             {
                 $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/titulacao", "$fileName");   
+                $file->storeAs("public/inscricao/$new->id/titulacao", "$fileName");
             }
         }
 
@@ -92,7 +121,7 @@ class ProcessoSeletivoInscricaoController extends Controller
             foreach($request->file('anexo_qualificacao') as $key => $file)
             {
                 $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/qualificacao", "$fileName");   
+                $file->storeAs("public/inscricao/$new->id/qualificacao", "$fileName");
             }
         }
 
@@ -100,7 +129,7 @@ class ProcessoSeletivoInscricaoController extends Controller
             foreach($request->file('anexo_experiencia_profissional') as $key => $file)
             {
                 $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");  
+                $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");
             }
         }
         return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso!');
@@ -153,16 +182,18 @@ class ProcessoSeletivoInscricaoController extends Controller
 
     public function indexSearch(Request $request, $id_processo_seletivo)
     {
-        $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
-        // $data = DB::table('processo_seletivo_inscricaos')
-        //             ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
-        //             ->select('processo_seletivo_inscricaos.id as id', 'processo_seletivo_inscricaos.id_tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome')
-        //             ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
-        //             ->where('nome', 'LIKE', "%".$request->pesquisa."%")
-        //             ->orderBy('processo_seletivo_inscricaos.nome')
-        //             ->paginate(15);
-        $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
-        return view('processoSeletivo.inscricoes.index', [
+	$processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+        //$data = DB::table('processo_seletivo_inscricaos')
+        //            ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+        //            ->select('processo_seletivo_inscricaos.id as id', 'processo_seletivo_inscricaos.id_tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome')
+        //            ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+        //            ->where('nome', 'LIKE', "%".$request->pesquisa."%")
+        //            ->orderBy('processo_seletivo_inscricaos.nome')
+        //            ->paginate(15);
+	//return $data;        
+	$data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
+        //return $data;
+	return view('processoSeletivo.inscricoes.index', [
             'id_processo_seletivo' => $id_processo_seletivo,
             'data' => $data,
             'processo_seletivo' => $processo_seletivo,
@@ -182,5 +213,5 @@ class ProcessoSeletivoInscricaoController extends Controller
     public function downloadArquivo($path){
         return Storage::download($path);
     }
-    
+
 }
