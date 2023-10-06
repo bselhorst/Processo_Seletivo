@@ -216,6 +216,75 @@ class ProcessoSeletivoController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function indeferidos($id){
+        $cursos = ProcessoSeletivoCurso::where('id_processo_seletivo', $id)->orderBy('titulo')->pluck('id');
+        $inscricao = ProcessoSeletivoInscricao::whereIn('id_processo_seletivo_curso', $cursos)->orderBy('id_processo_seletivo_curso')->pluck('id');
+        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional as total') )
+        ->whereIn('id_inscricao', $inscricao)
+        ->where('status', 'Indeferido')
+        ->orderBy('total', 'DESC')
+        ->get()
+        ->sortBy(
+            function($item){
+                return $item->inscricao->curso->municipio->nome;
+            }
+        )
+        ->sortBy(
+            function($item){
+                return $item->inscricao->curso->titulo;
+            }
+        );
+
+        //Exportar o Excel
+        $fileName = 'Lista de Indeferidos.csv';        
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Total', 'Criado em', 'Mensagem');
+
+        $callback = function() use($data, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($data as $item) {
+                if ($item->inscricao->curso->titulo != @$old_titulo && @$old_titulo != null){
+                    $row['ID']  = '';
+                    $row['Município']  = '';
+                    $row['Curso']  = '';
+                    $row['Nome']    = '';
+                    $row['Nota Titulação']    = '';
+                    $row['Nota Qualificação']    = '';
+                    $row['Nota Exp. Profissional']    = '';
+                    $row['Total']    = '';
+                    $row['Criado em']    = '';
+		            $row['Mensagem']    = '';
+                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+                }
+                $row['ID']  = $item->id_inscricao;
+                $row['Município']  = $item->inscricao->curso->municipio->nome;
+                $row['Curso']  = $item->inscricao->curso->titulo;
+                $row['Nome']    = $item->inscricao->nome;
+                $row['Nota Titulação']    = $item->nota_titulacao;
+                $row['Nota Qualificação']    = $item->nota_qualificacao;
+                $row['Nota Exp. Profissional']    = $item->nota_exp_profissional;
+                $row['Total']    = $item->total;
+                $row['Criado em']    = $item->inscricao->created_at;
+		        $row['Mensagem']    = $item->mensagem;
+                $old_titulo = $item->inscricao->curso->titulo;
+
+                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function resultadoForm($id){
         return view('processoSeletivo.formResultado', [
             'id_processo_seletivo' => $id,

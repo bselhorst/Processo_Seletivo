@@ -58,6 +58,7 @@ Route::prefix('processoseletivo')->group(function () {
     Route::patch('/{id}', [ProcessoSeletivoController::class, 'update'])->middleware(['auth', 'verified'])->name('ps.update');
     Route::delete('/{id}', [ProcessoSeletivoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('ps.destroy');
     Route::get('/{id}/resultado', [ProcessoSeletivoController::class, 'resultado'])->middleware(['auth', 'verified'])->name('ps.resultado');
+    Route::get('/{id}/indeferidos', [ProcessoSeletivoController::class, 'indeferidos'])->middleware(['auth', 'verified'])->name('ps.indeferidos');
     Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
     Route::patch('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoStore'])->middleware(['auth', 'verified'])->name('ps.resultadoStore');
 

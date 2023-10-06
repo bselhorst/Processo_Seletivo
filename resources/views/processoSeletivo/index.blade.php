@@ -78,6 +78,10 @@
                                             <i class="ph-users-four me-2"></i>
                                             Download do Resultado
                                         </a>
+                                        <a href="{{ route('ps.indeferidos', $item->id) }}" class="dropdown-item">
+                                            <i class="ph-user-minus me-2"></i>
+                                            Download dos Indeferidos
+                                        </a>
                                         @if (strtotime($item->data_encerramento) < strtotime('now'))
                                             <a href="{{ route('ps.resultadoForm', $item->id) }}" class="dropdown-item">
                                                 <i class="ph-file-plus me-2"></i>

@@ -20,7 +20,7 @@
                         <h6>Dados do Inscrito</h6>
                         <p style="text-align: justify">Processo Seltivo: <span class="fw-semibold">{{ $data->curso->processo_seletivo->titulo }}</span></p>
                         <p style="text-align: justify">Vaga: <span class="fw-semibold">{{ $data->curso->titulo }}</span></p>
-			<p style="text-align: justify">Data de Nascimento: <span class="fw-semibold">{{ $data->data_nascimento }}</span></p>
+			            <p style="text-align: justify">Data de Nascimento: <span class="fw-semibold">{{ $data->data_nascimento }}</span></p>
                         <p style="text-align: justify">Documento: <span class="fw-semibold">({{ $data->tipo_documento->nome }}) {{ $data->numero_documento }}</span></p>
                         <p style="text-align: justify">Endereço: <span class="fw-semibold">{{ $data->endereco }}</span></p>
                         @if ($data->bairro)
@@ -30,8 +30,8 @@
                         @if ($data->email)
                             <p style="text-align: justify">Email: <span class="fw-semibold">{{ $data->email }}</span></p>
                         @endif
-   			<p style="text-align:justify">PCD: <span class="fw-semibold">{{ ($data->deficiencia == 1)?'SIM':'NÃO' }}</span></p>
-			<p style="text-align: justify">Mensagem: <span class="fw-semibold">{{ @$data_nota->mensagem }}</span></p> 
+                        <p style="text-align:justify">PCD: <span class="fw-semibold">{{ ($data->deficiencia == 1)?'SIM':'NÃO' }}</span></p>
+                        <p style="text-align: justify">Mensagem: <span class="fw-semibold">{{ @$data_nota->mensagem }}</span></p> 
                     </div>
                     <?php
                         $anexo_curriculo = Storage::files("public/inscricao/$data->id/curriculos");
