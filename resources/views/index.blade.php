@@ -17,12 +17,11 @@
 						<div class="card-body bg-opacity-10 {{ (date(strtotime($item->data_encerramento)) >= time())? ((date(strtotime($item->data_abertura)) <= time())? '' : 'bg-success' ) : 'bg-danger' }}">
 							<div class="mb-3">
 								<h5 class="d-flex flex-nowrap my-1" style="text-align: justify">
-									<a href="{{ route('edital', $item->id) }}" class="me-2">{{ $item->titulo }}</a> 
-									@if (Storage::get("public/editais/$item->id/resultado.pdf"))
-										<code>RESULTADO PUBLICADO</code>
-									@endif
+									<a href="{{ route('edital', $item->id) }}" class="me-2">{{ $item->titulo }}</a> 									
 								</h5>
-
+								@if (Storage::get("public/editais/$item->id/resultado.pdf"))
+									<code>RESULTADO PUBLICADO</code>
+								@endif
 								<ul class="list-inline list-inline-bullet text-muted mb-0">
 									<li class="list-inline-item">Abertura: {{ date('d/m/Y h:i', strtotime($item->data_abertura)) }}</li>
 									<li class="list-inline-item">Encerramento: {{ date('d/m/Y h:i', strtotime($item->data_encerramento)) }}</li>

@@ -192,7 +192,7 @@ class ProcessoSeletivoController extends Controller
                     $row['Nota Exp. Profissional']    = '';
                     $row['Total']    = '';
                     $row['Criado em']    = '';
-		    $row['Mensagem']    = '';
+		            $row['Mensagem']    = '';
                     fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
                 }
                 $row['ID']  = $item->id_inscricao;
@@ -204,7 +204,7 @@ class ProcessoSeletivoController extends Controller
                 $row['Nota Exp. Profissional']    = $item->nota_exp_profissional;
                 $row['Total']    = $item->total;
                 $row['Criado em']    = $item->inscricao->created_at;
-		$row['Mensagem']    = $item->mensagem;
+		        $row['Mensagem']    = $item->mensagem;
                 $old_titulo = $item->inscricao->curso->titulo;
 
                 fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));

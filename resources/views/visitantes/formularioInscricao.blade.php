@@ -113,7 +113,6 @@
                     <label class="col-form-label col-lg-3">Pessoa com deficiência <span
                             class="text-danger">*</span></label>
                     <div class="col-lg-9 mt-1">
-
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="deficiencia" id="inlineRadio1"
                                 value="1" required>
@@ -129,13 +128,13 @@
 
                 <div class="card area_deficiencia d-none">
                     <div class="card-header">
-                        <h5 class="mb-0">Documento comprovatório da deficiência <code>(PDF, JPG, JPEG)</code>
+                        <h5 class="mb-0">Documento comprovatório da deficiência <code>(PDF)</code>
                         </h5>
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_deficiencia[]" class="file-input" multiple="multiple"
-                            accept=".jpg,.png,.jpeg,.pdf" id="anexo_deficiencia">
+                            accept=".pdf" id="anexo_deficiencia">
                     </div>
                 </div>
 
@@ -143,48 +142,58 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Documento com foto (RG, CNH, Carteira de Identidade Profissional) e Currículo (Conforme modelo disponível no anexo II do edital.) <code>(PDF,
-                                JPG, JPEG)</code></h5>
+                        <h5 class="mb-0">Documento com foto (RG, CNH, Carteira de Identidade Profissional) <code>(PDF)</code></h5>
                     </div>
                     <div class="card-body">
                         <p class="mb-3">Exemplo de documentos (com foto): RG, Passaporte, Carteira de Trabalho.</p>
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_documento[]" class="file-input-required"
-                            accept=".jpg,.jpeg,.pdf" multiple>
+                            accept=".pdf" multiple>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Escolaridade (Graduação, Especialização, Mestrado, Doutorado) <code>(PDF, JPG, JPEG)</code>
+                        <h5 class="mb-0">Escolaridade (Graduação, Especialização, Mestrado, Doutorado) <code>(PDF)</code>
                         </h5>
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_titulacao[]" class="file-input-required" multiple="multiple"
-                            accept=".jpg,.png,.jpeg,.pdf">
+                            accept=".pdf">
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Qualificação e aperfeiçoamento profissional <code>(PDF, JPG, JPEG)</code></h5>
+                        <h5 class="mb-0">Qualificação e aperfeiçoamento profissional <code>(PDF)</code></h5>
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_qualificacao[]" class="file-input-required" multiple="multiple"
-                            accept=".jpg,.png,.jpeg,.pdf">
+                            accept=".pdf">
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Experiência Profissional <code>(PDF, JPG, JPEG)</code></h5>
+                        <h5 class="mb-0">Experiência Profissional <code>(PDF)</code></h5>
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_experiencia_profissional[]" class="file-input-required"
-                            multiple="multiple" accept=".jpg,.png,.jpeg,.pdf">
+                            multiple="multiple" accept=".pdf">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Currículo <code>(PDF)</code></h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="fw-semibold">Pré visualização</p>
+                        <input type="file" name="anexo_curriculo[]" class="file-input"
+                            multiple="multiple" accept=".pdf">
                     </div>
                 </div>
 

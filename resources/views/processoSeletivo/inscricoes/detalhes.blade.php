@@ -34,6 +34,7 @@
 			<p style="text-align: justify">Mensagem: <span class="fw-semibold">{{ @$data_nota->mensagem }}</span></p> 
                     </div>
                     <?php
+                        $anexo_curriculo = Storage::files("public/inscricao/$data->id/curriculos");
                         $anexo_documentos = Storage::files("public/inscricao/$data->id/documentos");
                         $anexo_titulacao = Storage::files("public/inscricao/$data->id/titulacao");
                         $anexo_qualificacao = Storage::files("public/inscricao/$data->id/qualificacao");
@@ -44,6 +45,20 @@
                         <h6>Documentos</h6>
                         @if (@$anexo_documentos) 
                             @foreach ($anexo_documentos as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        @else
+                            Não Possui
+                        @endif
+                    </div>
+
+                    <div class="mt-1 mb-4">
+                        <h6>Currículo</h6>
+                        @if (@$anexo_curriculo) 
+                            @foreach ($anexo_curriculo as $documento)
                             <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
                                 <i class="ph-file-pdf ph-2x mb-1"></i>
                                 Ver Arquivo
