@@ -19,6 +19,7 @@
 
     <script src="{{ asset('assets/js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/forms/validation/validate.min.js') }}"></script>
+    <script src="{{ asset('assets/js/vendor/forms/inputs/imask.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/forms/selects/select2.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/tables/datatables/datatables.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/uploaders/fileinput/fileinput.min.js') }}"></script>
@@ -159,14 +160,27 @@
 								<li class="nav-item"><a href="../../../LTR/material/full/index.html" class="nav-link disabled">Cursos <span class="badge align-self-center ms-auto">Coming soon</span></a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
+						<!-- Main -->
+						<li class="nav-item-header" {{ (Auth::user()->isSuperAdmin == 0) ? 'hidden' : '' }}>
+							<div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Usuários</div>
+							<i class="ph-dots-three sidebar-resize-show"></i>
+						</li>
+						<li class="nav-item" {{ (Auth::user()->isSuperAdmin == 0) ? 'hidden' : '' }}>
+							<a href="/usuarios" class="nav-link">
+								<i class="ph-users"></i>
+								<span>
+									Listar Usuários
+								</span>
+							</a>
+						</li>
+						{{-- <li class="nav-item" {{ (Auth::user()->isSuperAdmin == 0) ? 'hidden' : '' }}>
 							<a href="/register" class="nav-link">
 								<i class="ph-user-plus"></i>
 								<span>
 									Adicionar Usuário
 								</span>
 							</a>
-						</li>
+						</li> --}}
 						<!-- /page kits -->
 					</ul>
 				</div>

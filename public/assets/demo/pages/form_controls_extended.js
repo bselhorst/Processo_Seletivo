@@ -42,6 +42,21 @@ const ExtendedFormControls = function() {
             });
         }
 
+        // NumeroContato #
+        const numeroContato = document.querySelector('#numero_contato');
+        if(numeroContato) {
+            const numContato = IMask(numeroContato, {
+                mask: [
+                    {
+                        mask: '(00)0000-0000'
+                    },
+                    {
+                        mask: '(00)00000-0000'
+                    }
+                ]
+            });
+        }
+
         // Phone # with extension
         const maskPhoneExtElement = document.querySelector('#mask_phone_ext');
         if(maskPhoneExtElement) {

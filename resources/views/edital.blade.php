@@ -37,10 +37,10 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Município</th>
-                                    <th>Titulo</th>
-                                    <th>Descrição</th>
+                                    <th>Área de Atuação</th>
+                                    <th>Perfil / Profissional</th>
                                     @if (count($salario) > 0)
-                                        <th>Salário</th>
+                                        <th>Remuneração</th>
                                     @endif
                                     <th>Vagas</th>
                                     @if (date(strtotime($data->data_encerramento)) >= time())

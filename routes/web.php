@@ -7,6 +7,7 @@ use App\Http\Controllers\ProcessoSeletivoController;
 use App\Http\Controllers\ProcessoSeletivoCursoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoNotaController;
+use App\Http\Controllers\UsuariosController;
 use Illuminate\Support\Facades\Route;
 use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
@@ -15,6 +16,9 @@ use App\Models\ProcessoSeletivoInscricao;
 use App\Models\ProcessoSeletivoInscricaoNota;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
+use App\Mail\Confirmacao;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +49,16 @@ Route::prefix('auxiliares')->group(function () {
         Route::patch('/{id}', [AuxiliarTipoDocumentoController::class, 'update'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.update');
         Route::delete('/{id}', [AuxiliarTipoDocumentoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('aux.tipodocumento.destroy');
     });
+});
+
+//ROTA AUXILIARES
+Route::prefix('usuarios')->middleware('admin')->group(function () {
+    Route::get('/', [UsuariosController::class, 'index'])->middleware(['auth', 'verified'])->name('usuarios.index');
+    Route::post('/search', [UsuariosController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('usuarios.indexSearch');
+    Route::get('/{id}', [UsuariosController::class, 'edit'])->middleware(['auth', 'verified'])->name('usuarios.edit');
+    Route::post('/', [UsuariosController::class, 'store'])->middleware(['auth', 'verified'])->name('usuarios.store');
+    Route::patch('/{id}', [UsuariosController::class, 'update'])->middleware(['auth', 'verified'])->name('usuarios.update');
+    Route::delete('/{id}', [UsuariosController::class, 'destroy'])->middleware(['auth', 'verified'])->name('usuarios.destroy');
 });
 
 //ROTA PROCESSO SELETIVO E CURSOS
@@ -124,6 +138,10 @@ Route::get('/{id}/downloadEdital', [ProcessoSeletivoController::class, 'download
 
 Route::get('/cursos', [ProcessoSeletivoCursoController::class, 'index'])->middleware(['auth', 'verified'])->name('psc.index');
 
+Route::get('/teste', function(){
+    return Auth::user();
+});
+
 Route::get('/perfil', function(){
     return view('profile.perfil', [
             'user' => Auth::user(),
@@ -140,9 +158,31 @@ Route::get('/dashboard', function () {
     return redirect()->route('ps.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->middleware(['auth', 'verified']);
+// Route::get('/register', function () {
+//     return view('auth.register');
+// })->middleware(['auth', 'verified', 'admin']);
+
+// Route::get('/register', function () {
+//     return redirect()->route("usuarios.index");
+// })->middleware('admin');
+
+Route::get('/emailteste/{email}', function($email) {
+    $teste = [
+        "nome" => "Teste",
+        "id_processo_seletivo" => 7,
+        "id_processo_seletivo_curso" => 411,
+        "id_tipo_documento" => 2,
+        "numero_documento" => "132132132",
+        "numero_contato" => "32132132132",
+        "email" => "teste@teste.com"
+    ];
+
+    Mail::to($email)->send(new Confirmacao($teste));
+});
+
+// Route::get('/emailteste', function() {
+//     return view('mail.confirmacao');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

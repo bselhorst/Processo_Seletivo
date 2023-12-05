@@ -11,6 +11,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
+    
     <div class="card">
         <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" enctype='multipart/form-data'
             novalidate>
@@ -43,15 +44,31 @@
                 <p class="mb-4">NOTA: Por favor, leia com atenção os campos e preencha corretamente as informações abaixo.
                 </p>
                 <div class="row mb-3">
+                    <label class="col-form-label col-lg-3">Pessoa com deficiência <span
+                            class="text-danger">*</span></label>
+                    <div class="col-lg-9 mt-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="deficiencia" id="inlineRadio1"
+                                value="1" required>
+                            <label class="form-check-label" for="inlineRadio1">Sim</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="deficiencia" id="inlineRadio2"
+                                value="2" required>
+                            <label class="form-check-label" for="inlineRadio2">Não</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Nome Completo <span class="text-danger">*</span></label>
-                    <div class="col-lg-9">
+                    <div class="col-lg-5">
                         <input type="text" name="nome" class="form-control" required=""
                             placeholder="Nome completo sem abreviações" aria-invalid="false">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Data de Nascimento <span class="text-danger">*</span></label>
-                    <div class="col-lg-9">
+                    <div class="col-lg-4">
                         <input type="date" name="data_nascimento" class="form-control" required=""
                             aria-invalid="false">
                     </div>
@@ -96,7 +113,7 @@
                     <label class="col-form-label col-lg-3">Número para contato (DDD + número (somente número)) <span
                             class="text-danger">*</span></label>
                     <div class="col-lg-3">
-                        <input type="text" name="numero_contato" class="form-control" required=""
+                        <input type="text" name="numero_contato" id="numero_contato" class="form-control" required=""
                             placeholder="68999999999">
                     </div>
                 </div>
@@ -106,23 +123,6 @@
                     <div class="col-lg-9">
                         <input type="email" name="email" class="form-control" required id="email"
                             placeholder="Adicione um email válido" aria-invalid="true">
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-3">Pessoa com deficiência <span
-                            class="text-danger">*</span></label>
-                    <div class="col-lg-9 mt-1">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="deficiencia" id="inlineRadio1"
-                                value="1" required>
-                            <label class="form-check-label" for="inlineRadio1">Sim</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="deficiencia" id="inlineRadio2"
-                                value="2" required>
-                            <label class="form-check-label" for="inlineRadio2">Não</label>
-                        </div>
                     </div>
                 </div>
 

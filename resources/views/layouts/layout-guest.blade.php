@@ -21,6 +21,7 @@
 	<script src="{{ asset('assets/js/vendor/visualization/echarts/echarts.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/maps/echarts/world.js') }}"></script> --}}
 	<script src="{{ asset('assets/js/jquery/jquery.min.js') }}"></script>
+	<script src="{{ asset('assets/js/vendor/forms/inputs/imask.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/forms/validation/validate.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/forms/selects/select2.min.js') }}"></script>
 	<script src="{{ asset('assets/js/vendor/uploaders/fileinput/fileinput.min.js') }}"></script>
@@ -31,6 +32,7 @@
 	<script src="{{ asset('assets/demo/pages/form_validation_styles.js') }}"></script>
     <script src="{{ asset('assets/demo/pages/form_validation_library.js') }}"></script>
 	<script src="{{ asset('assets/demo/pages/form_select2.js') }}"></script>
+	<script src="{{ asset('assets/demo/pages/form_controls_extended.js') }}"></script>
 	{{-- <script src="{{ asset('assets/demo/charts/pages/dashboard_6/area_gradient.js') }}"></script>
 	<script src="{{ asset('assets/demo/charts/pages/dashboard_6/map_europe_effect.js') }}"></script>
 	<script src="{{ asset('assets/demo/charts/pages/dashboard_6/progress_sortable.js') }}"></script>

@@ -11,6 +11,9 @@ use App\Models\ProcessoSeletivoInscricaoNota;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Mail\Confirmacao;
+use Illuminate\Support\Facades\Mail;
+
 class ProcessoSeletivoInscricaoController extends Controller
 {
     /**
@@ -132,7 +135,10 @@ class ProcessoSeletivoInscricaoController extends Controller
                 $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");
             }
         }
-        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso!');
+
+        Mail::to($request->email)->send(new Confirmacao($validatedData));
+
+        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso. A confirmação da inscrição foi enviada para o seu email!');
     }
 
     /**
