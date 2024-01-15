@@ -70,7 +70,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-2 offset-lg-1">Senha</label>
                     <div class="col-lg-8">
-                        <input type="password" name="password" class="form-control" placeholder="Senha" {{ (@!$data_user) ? 'required' : '' }}>
+                        <input type="password" name="password" class="form-control" placeholder="Senha" {{ (@$data_user) ? '' : 'required' }}>
                         <div class="invalid-feedback">Campo obrigatório!</div>
                         <div class="valid-feedback">Campo válido</div>
                     </div>
@@ -79,7 +79,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-2 offset-lg-1">Confirmar Senha</label>
                     <div class="col-lg-8">
-                        <input type="password" name="confirmPassword" class="form-control" placeholder="Confirmar senha" {{ (@!$data_user) ? 'required' : '' }}>
+                        <input type="password" name="confirmPassword" class="form-control" placeholder="Confirmar senha" {{ (@$data_user) ? '' : 'required' }}>
                         <div class="invalid-feedback">Campo obrigatório!</div>
                         <div class="valid-feedback">Campo válido</div>
                     </div>
