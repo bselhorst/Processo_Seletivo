@@ -25,6 +25,7 @@ class ProcessoSeletivoInscricaoController extends Controller
     {
         $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
         $data = DB::table('processo_seletivo_inscricaos')
+                    ->distinct('processo_seletivo_inscricaos.id')
                     ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
                     ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
                     ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
@@ -39,6 +40,22 @@ class ProcessoSeletivoInscricaoController extends Controller
             'data' => $data,
             'processo_seletivo' => $processo_seletivo,
         ]);
+    }
+
+    public function json($id_processo_seletivo)
+    {
+        $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+        $data = DB::table('processo_seletivo_inscricaos')
+                    ->distinct('processo_seletivo_inscricaos.id')
+                    ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+                    ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
+                    ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
+                    ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status')
+                    ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+                    ->orderBy('processo_seletivo_inscricao_notas.status')
+                    ->orderBy('processo_seletivo_inscricaos.nome')
+                    ->paginate(15);
+        return $data;
     }
 
     /**
@@ -189,15 +206,18 @@ class ProcessoSeletivoInscricaoController extends Controller
     public function indexSearch(Request $request, $id_processo_seletivo)
     {
 	$processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
-        //$data = DB::table('processo_seletivo_inscricaos')
-        //            ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
-        //            ->select('processo_seletivo_inscricaos.id as id', 'processo_seletivo_inscricaos.id_tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome')
-        //            ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
-        //            ->where('nome', 'LIKE', "%".$request->pesquisa."%")
-        //            ->orderBy('processo_seletivo_inscricaos.nome')
-        //            ->paginate(15);
-	//return $data;        
-	$data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
+    $data = DB::table('processo_seletivo_inscricaos')
+                ->distinct('processo_seletivo_inscricaos.id')
+                ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+                ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
+                ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
+                ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status')
+                ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+                ->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%")
+                ->orderBy('processo_seletivo_inscricao_notas.status')
+                ->orderBy('processo_seletivo_inscricaos.nome')
+                ->paginate(15);       
+	// $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
         //return $data;
 	return view('processoSeletivo.inscricoes.index', [
             'id_processo_seletivo' => $id_processo_seletivo,

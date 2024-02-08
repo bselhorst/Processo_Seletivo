@@ -30,8 +30,11 @@
 							<p style="text-align: justify">{{ $item->descricao }}</p>
 
 						</div>
-						@if (date(strtotime($item->data_encerramento)) >= time())
-							@if (date(strtotime($item->data_abertura)) <= time())
+						@php
+						date_default_timezone_set('America/Rio_Branco');	
+						@endphp
+						@if (date(strtotime($item->data_encerramento)) > date(strtotime('now')))
+							@if (date(strtotime($item->data_abertura)) < date(strtotime('now')))
 								<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center">
 									<ul class="list-inline mb-0">
 										{{-- <li class="list-inline-item"><i class="ph-users me-1"></i> {{ App\Models\ProcessoSeletivoCurso::where('id_processo_seletivo', $item->id)->sum('vagas') }}</li> --}}

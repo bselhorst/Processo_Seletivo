@@ -89,6 +89,7 @@ Route::prefix('processoseletivo')->group(function () {
 
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/inscricoes')->group(function () {
+        Route::get('/json', [ProcessoSeletivoInscricaoController::class, 'json'])->middleware(['auth', 'verified'])->name('pi.json');
         Route::get('/', [ProcessoSeletivoInscricaoController::class, 'index'])->middleware(['auth', 'verified'])->name('pi.index');
         Route::post('/', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
         Route::patch('/detalhes/{id}', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
@@ -150,7 +151,7 @@ Route::get('/perfil', function(){
 
 Route::get('/', function () {
     return view('index', [
-        'data' => ProcessoSeletivo::orderBy('data_abertura', 'DESC')->orderBy('data_encerramento', 'DESC')->orderBy('id', 'DESC')->paginate(10),
+        'data' => ProcessoSeletivo::where('data_abertura', '<=', date('Y-m-d h:i:s'))->orderBy('data_abertura', 'DESC')->orderBy('data_encerramento', 'DESC')->orderBy('id', 'DESC')->paginate(10),
     ]);
 });
 

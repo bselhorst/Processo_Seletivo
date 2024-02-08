@@ -192,7 +192,7 @@
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_curriculo[]" class="file-input"
+                        <input type="file" name="anexo_curriculo[]" class="file-input-required"
                             multiple="multiple" accept=".pdf">
                     </div>
                 </div>
