@@ -24,7 +24,21 @@
                             </a>
                         </div>                        
                     @endif
-                @endif                
+                @endif   
+                @php
+                    $documentos_adicionais = Storage::files("public/editais/$data->id/documentos_adicionais");
+                @endphp
+                @if (@$documentos_adicionais)
+                    <div class="mt-1 mb-4">
+                        <h6>Documentos Adicionais</h6>
+                        @foreach ($documentos_adicionais as $documento)
+                        <a href="{{ Storage::url($documento) }}" target="_blank" class="btn {{ (explode(".", explode("/", $documento)[4])[1] == 'pdf')?'btn-outline-danger':'btn-outline-primary' }} flex-column">
+                            <i class="{{ (explode(".", explode("/", $documento)[4])[1] == 'pdf')?'ph-file-pdf':'ph-file-doc' }} ph-2x mb-1"></i>
+                            {{ explode("/", $documento)[4] }}
+                        </a>
+                        @endforeach
+                    </div>
+                @endif             
                 <div class="mt-1 mb-4">
                     <h6>Descrição</h6>
                     <p style="text-align: justify">{{ $data->descricao }}</p>

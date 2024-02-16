@@ -68,6 +68,42 @@ use Illuminate\Support\Facades\URL;
                 </div>
             </div>
 
+            <div class="row mb-3">
+                <label class="col-form-label col-lg-2 offset-lg-1">Documentos Adicionais <code>(PDF, DOC e DOCX)</code> <span class="text-danger">*</span></label>
+                <div class="col-lg-6">
+                    <input type="file" name="documentos_adicionais[]" id="documentos_adicionais" class="{{ (@$data)? 'file-input': 'file-input-required' }}" data-msg-required="Por favor selecione um arquivo" multiple="multiple" accept=".pdf,.doc,.docx">
+                </div>
+            </div>
+            @if (@$data)
+                <div class="row mb-3">
+                    <div class="col-lg-6 offset-lg-3">
+                        @php
+                            $documentos_adicionais = Storage::files("public/editais/$data->id/documentos_adicionais");
+                        @endphp
+                        @if (@$documentos_adicionais)
+                        <h6>Documentos Adicionais</h6>    
+                            <table class="table">
+                                <th>Arquivo</th>
+                                <th>Ação</th>
+                                @foreach ($documentos_adicionais as $documento)
+                                    <tr>
+                                        <td>{{ explode("/", $documento)[4] }}</td>
+                                        <td><a class="btn btn-danger" href="{{ route('ps.removeFile', [$data->id, explode("/", $documento)[4]]) }}">Deletar</a></td>
+                                    </tr>
+                                    {{-- <a href="{{ Storage::url($documento) }}" target="_blank" class="btn {{ (explode(".", explode("/", $documento)[4])[1] == 'pdf')?'btn-outline-danger':'btn-outline-primary' }} flex-column">
+                                        <i class="{{ (explode(".", explode("/", $documento)[4])[1] == 'pdf')?'ph-file-pdf':'ph-file-doc' }} ph-2x mb-1"></i>
+                                        {{ explode("/", $documento)[4] }}
+                                    </a>
+                                    <button>Deletar</button> --}}
+                                @endforeach
+                            </table>
+                        @else
+                            <h6>Não possui documentos adicionais</h6> 
+                        @endif   
+                    </div>
+                </div>
+            @endif
+
             <div class="card-footer text-end">
                 <a href="{{ route('ps.index') }}" class="btn btn-primary">Cancelar </a>
                 @if (@$data)

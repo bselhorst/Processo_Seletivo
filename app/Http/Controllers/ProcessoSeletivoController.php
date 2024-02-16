@@ -53,7 +53,13 @@ class ProcessoSeletivoController extends Controller
             'file' => 'required'
         ]);
         $new = ProcessoSeletivo::create($validatedData);
-        $request->file->storeAs("public/editais/$new->id", 'edital.pdf');
+        $request->file('file')->storeAs("public/editais/$new->id", 'edital.pdf');
+        if (@$request->file('documentos_adicionais')){
+            foreach($request->file('documentos_adicionais') as $key => $file)
+            {
+                $file->storeAs("public/editais/$new->id/documentos_adicionais", $file->getClientOriginalName());
+            }
+        }
         return redirect()->route("ps.index")->with('success', 'Registro adicionado com sucesso!');
     }
 
@@ -91,7 +97,13 @@ class ProcessoSeletivoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if($request->file){
+        if (@$request->file('documentos_adicionais')){
+            foreach($request->file('documentos_adicionais') as $key => $file)
+            {
+                $file->storeAs("public/editais/$id/documentos_adicionais", $file->getClientOriginalName());
+            }
+        }
+        if(@$request->file('file')){
             $request->file->storeAs("public/editais/$id", 'edital.pdf');
         }
         $validatedData = $request->validate([
@@ -302,5 +314,10 @@ class ProcessoSeletivoController extends Controller
         // return $validatedData;
         ProcessoSeletivo::whereId($id)->update($validatedData);
         return redirect()->route("ps.index")->with('success', 'Resultado cadastrado com sucesso!');
+    }
+
+    public function removeFile($id, $fileName){
+        Storage::delete('public/editais/'.$id.'/documentos_adicionais/'.$fileName);
+        return redirect()->back();
     }
 }
