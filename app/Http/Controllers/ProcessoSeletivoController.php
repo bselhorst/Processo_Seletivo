@@ -320,4 +320,20 @@ class ProcessoSeletivoController extends Controller
         Storage::delete('public/editais/'.$id.'/documentos_adicionais/'.$fileName);
         return redirect()->back();
     }
+
+    public function pessoasIndex(){
+        // $data = ProcessoSeletivo::orderBy('id', 'DESC')->paginate(10);
+        $data = ProcessoSeletivoInscricao::orderBy('id', 'DESC')->paginate(10);
+        // return $data;
+        return view('processoSeletivo.pessoas.index', [
+            'data' => $data,
+        ]);
+    }
+
+    public function pessoaIndexSearch(Request $request){
+        $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->orWhere('numero_documento', '=', $request->pesquisa)->orderBy('id', 'DESC')->paginate(20);
+        return view('processoSeletivo.pessoas.index', [
+            'data' => $data,
+        ]);
+    }
 }

@@ -77,6 +77,10 @@ Route::prefix('processoseletivo')->group(function () {
     Route::patch('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoStore'])->middleware(['auth', 'verified'])->name('ps.resultadoStore');
     Route::get('/removeFile/{id}/{filename}', [ProcessoSeletivoController::class, 'removeFile'])->middleware(['auth', 'verified'])->name('ps.removeFile');
 
+    //PESQUISA DE PESSOAS EM TODOS OS PROCESSO SELETIVOS
+    Route::get('/pessoas', [ProcessoSeletivoController::class, 'pessoasIndex'])->middleware(['auth', 'verified'])->name('ps.index');
+    Route::post('/pessoas/search', [ProcessoSeletivoController::class, 'pessoaIndexSearch'])->middleware(['auth', 'verified'])->name('ps.pessoaIndexSearch');
+
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/cursos')->group(function () {
         Route::get('/', [ProcessoSeletivoCursoController::class, 'index'])->middleware(['auth', 'verified'])->name('pc.index');
