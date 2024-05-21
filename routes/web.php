@@ -73,13 +73,16 @@ Route::prefix('processoseletivo')->group(function () {
     Route::delete('/{id}', [ProcessoSeletivoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('ps.destroy');
     Route::get('/{id}/resultado', [ProcessoSeletivoController::class, 'resultado'])->middleware(['auth', 'verified'])->name('ps.resultado');
     Route::get('/{id}/indeferidos', [ProcessoSeletivoController::class, 'indeferidos'])->middleware(['auth', 'verified'])->name('ps.indeferidos');
-    Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
+    // Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
     Route::patch('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoStore'])->middleware(['auth', 'verified'])->name('ps.resultadoStore');
     Route::get('/removeFile/{id}/{filename}', [ProcessoSeletivoController::class, 'removeFile'])->middleware(['auth', 'verified'])->name('ps.removeFile');
 
     //PESQUISA DE PESSOAS EM TODOS OS PROCESSO SELETIVOS
     Route::get('/pessoas', [ProcessoSeletivoController::class, 'pessoasIndex'])->middleware(['auth', 'verified'])->name('ps.pessoaIndex');
     Route::post('/pessoas/search', [ProcessoSeletivoController::class, 'pessoaIndexSearch'])->middleware(['auth', 'verified'])->name('ps.pessoaIndexSearch');
+
+    //Classificação e Resultado
+    Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
 
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/cursos')->group(function () {
@@ -117,6 +120,32 @@ Route::get('/edital/{id}', function ($id) {
         'salario' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->where("salario", ">", 0)->get(),
     ]);
 })->name('edital');
+
+//ROTA DO RESULTADO
+Route::get('/resultado/{id}', function ($id) {
+    $cursos = ProcessoSeletivoCurso::where('id_processo_seletivo', $id)->orderBy('titulo')->pluck('id');
+    $inscricao = ProcessoSeletivoInscricao::whereIn('id_processo_seletivo_curso', $cursos)->orderBy('id_processo_seletivo_curso')->pluck('id');
+    $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional as total') )
+    ->whereIn('id_inscricao', $inscricao)
+    ->where('status', 'Deferido')
+    ->orderBy('total', 'DESC')
+    ->get()
+    ->sortBy(
+        function($item){
+            return $item->inscricao->curso->municipio->nome;
+        }
+    )
+    ->sortBy(
+        function($item){
+            return $item->inscricao->curso->titulo;
+        }
+    );
+    return view('resultado', [
+        'id_processo_seletivo' => $id,
+        'inscritos' => $data,
+        'data' => ProcessoSeletivo::findOrFail($id),
+    ]);
+})->name('resultado');
 
 //ROTA FORMULÁRIO DE INSCRIÇÃO
 Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = null) {

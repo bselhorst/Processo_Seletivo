@@ -298,15 +298,33 @@ class ProcessoSeletivoController extends Controller
     }
 
     public function resultadoForm($id){
+        $cursos = ProcessoSeletivoCurso::where('id_processo_seletivo', $id)->orderBy('titulo')->pluck('id');
+        $inscricao = ProcessoSeletivoInscricao::whereIn('id_processo_seletivo_curso', $cursos)->orderBy('id_processo_seletivo_curso')->pluck('id');
+        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional as total') )
+        ->whereIn('id_inscricao', $inscricao)
+        ->where('status', 'Deferido')
+        ->orderBy('total', 'DESC')
+        ->get()
+        ->sortBy(
+            function($item){
+                return $item->inscricao->curso->municipio->nome;
+            }
+        )
+        ->sortBy(
+            function($item){
+                return $item->inscricao->curso->titulo;
+            }
+        );
         return view('processoSeletivo.formResultado', [
             'id_processo_seletivo' => $id,
+            'data' => $data
         ]);
     }
 
     public function resultadoStore(Request $request, $id){
-        if($request->file){
-            $request->file->storeAs("public/editais/$id", 'resultado.pdf');
-        }
+        // if($request->file){
+        //     $request->file->storeAs("public/editais/$id", 'resultado.pdf');
+        // }
         $request["resultado"] = true;
         $validatedData = $request->validate([
             'resultado' => 'required',
