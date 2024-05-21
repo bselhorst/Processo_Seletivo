@@ -37,10 +37,14 @@ use Illuminate\Support\Facades\URL;
                                 <th style="width: 10%">Classificação</th>
                                 <th>Documento</th>
                                 <th>Nome</th>
+                                <th>Idade</th>
                                 <th>PCD</th>
                                 {{-- <th>Curso</th>
                                 <th>Município</th> --}}
-                                <th>Pontuação</th>
+                                <th>Titulação</th>
+                                <th>Qualificação</th>
+                                <th>Exp. Profissional</th>
+                                <th>Pontuação Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,7 +55,7 @@ use Illuminate\Support\Facades\URL;
                                 @if (($item->inscricao->curso->titulo != @$old_titulo && @$old_titulo != null) OR @$old_titulo == null)
                                     @php($classificacao = 1)
                                     <tr>
-                                        <td colspan="5" style="font-size: 16px"><b>{{ $item->inscricao->curso->municipio->nome." / ".$item->inscricao->curso->titulo }}</td>
+                                        <td colspan="9" style="font-size: 16px"><b>{{ $item->inscricao->curso->municipio->nome." / ".$item->inscricao->curso->titulo }}</td>
                                     </tr>                                        
                                 @endif
 
@@ -59,9 +63,13 @@ use Illuminate\Support\Facades\URL;
                                     <td>{{ $classificacao }}</td>
                                     <td>{{ $item->inscricao->tipo_documento->nome.": ".$item->inscricao->numero_documento }}</td>
                                     <td>{{ $item->inscricao->nome }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->inscricao->data_nascimento)->diff(\Carbon\Carbon::now())->format('%y anos')  }}</td>
                                     <td>{{ $item->inscricao->deficiencia == 1 ? 'SIM' : 'NÃO' }}</td>
                                     {{-- <td>{{ $item->inscricao->curso->titulo }}</td>
                                     <td>{{ $item->inscricao->curso->municipio->nome }}</td> --}}
+                                    <td>{{ $item->nota_titulacao }}</td>
+                                    <td>{{ $item->nota_qualificacao }}</td>
+                                    <td>{{ $item->nota_exp_profissional }}</td>
                                     <td>{{ $item->total }}</td>
                                 </tr>
                                     
