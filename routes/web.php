@@ -79,7 +79,7 @@ Route::prefix('processoseletivo')->group(function () {
 
     //PESQUISA DE PESSOAS EM TODOS OS PROCESSO SELETIVOS
     Route::get('/pessoas', [ProcessoSeletivoController::class, 'pessoasIndex'])->middleware(['auth', 'verified'])->name('ps.pessoaIndex');
-    Route::post('/pessoas/search', [ProcessoSeletivoController::class, 'pessoaIndexSearch'])->middleware(['auth', 'verified'])->name('ps.pessoaIndexSearch');
+    Route::match(array('GET', 'POST'), '/pessoas/search', [ProcessoSeletivoController::class, 'pessoaIndexSearch'])->middleware(['auth', 'verified'])->name('ps.pessoaIndexSearch');
 
     //Classificação e Resultado
     Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');

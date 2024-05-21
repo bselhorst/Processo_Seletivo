@@ -20,7 +20,7 @@
             <h6 class="mb-0">Filtro</h6>
         </div>
 
-        <form method="POST" action="{{ route('ps.pessoaIndexSearch') }}">
+        <form method=GET" action="{{ route('ps.pessoaIndexSearch') }}">
             @csrf
             <div class="d-flex justify-content-center border rounded p-2">
                 <div class="col-lg-5 py-2 px-3 rounded">
@@ -157,11 +157,11 @@
                     @for ($i = $data->currentPage()-2; $i <= $data->currentPage(); $i++)
                         @if ($i == $data->currentPage())
                             <li class="page-item active">
-                                <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
+                                <a href="{{ (@$_GET['pesquisa']) ? $data->url($i).'&pesquisa='.@$_GET['pesquisa'] : $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                             </li>
                         @else
                             <li class="page-item">
-                                <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
+                                <a href="{{ (@$_GET['pesquisa']) ? $data->url($i).'&pesquisa='.@$_GET['pesquisa'] : $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                             </li>
                         @endif
                     @endfor
@@ -169,11 +169,11 @@
                     @for ($i = 1; $i <= $data->currentPage(); $i++)
                         @if ($i == $data->currentPage())
                             <li class="page-item active">
-                                <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
+                                <a href="{{ (@$_GET['pesquisa']) ? $data->url($i).'&pesquisa='.@$_GET['pesquisa'] : $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                             </li>
                         @else
                             <li class="page-item">
-                                <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
+                                <a href="{{ (@$_GET['pesquisa']) ? $data->url($i).'&pesquisa='.@$_GET['pesquisa'] : $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                             </li>
                         @endif
                     @endfor
@@ -181,13 +181,13 @@
                 @if ($data->lastPage()-$data->currentPage() < 3)
                     @for ($i = $data->currentPage()+1; $i <= $data->lastPage(); $i++)
                         <li class="page-item">
-                            <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
+                            <a href="{{ (@$_GET['pesquisa']) ? $data->url($i).'&pesquisa='.@$_GET['pesquisa'] : $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                         </li>
                     @endfor
                 @else
                     @for ($i = $data->currentPage()+1; $i <= $data->currentPage()+2; $i++)
                         <li class="page-item">
-                            <a href="{{ $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
+                            <a href="{{ (@$_GET['pesquisa']) ? $data->url($i).'&pesquisa='.@$_GET['pesquisa'] : $data->url($i) }}" class="page-link rounded">{{ $i }}</a>
                         </li>
                     @endfor
                 @endif
@@ -196,11 +196,11 @@
                         <a href="#" class="page-link rounded">...</a>
                     </li>
                     <li class="page-item">
-                        <a href="{{ $data->url($data->lastPage()) }}" class="page-link rounded">{{ $data->lastPage() }}</a>
+                        <a href="{{ (@$_GET['pesquisa']) ? $data->url($data->lastPage()).'&pesquisa='.@$_GET['pesquisa'] : $data->url($data->lastPage()) }}" class="page-link rounded">{{ $data->lastPage() }}</a>
                     </li>
                 @endif
                 <li class="page-item {{ ($data->hasMorePages()) ? '' : 'disabled' }}">
-                    <a href="{{ $data->nextPageUrl() }}" class="page-link rounded">→</a>
+                    <a href="{{ (@$_GET['pesquisa']) ? $data->nextPageUrl().'&pesquisa='.@$_GET['pesquisa'] : $data->nextPageUrl() }}" class="page-link rounded">→</a>
                 </li>
             </ul>
         </div>
