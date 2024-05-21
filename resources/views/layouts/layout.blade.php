@@ -173,6 +173,15 @@
 								</span>
 							</a>
 						</li>
+						<li class="nav-item">
+							<a href="/processoseletivo/pessoas" class="nav-link">
+								<i class="ph-magnifying-glass"></i>
+								<span>
+									Pesquisar inscrito
+									{{-- <span class="d-block fw-normal opacity-50">No pending orders</span> --}}
+								</span>
+							</a>
+						</li>
 						{{-- <li class="nav-item" {{ (Auth::user()->isSuperAdmin == 0) ? 'hidden' : '' }}>
 							<a href="/register" class="nav-link">
 								<i class="ph-user-plus"></i>
