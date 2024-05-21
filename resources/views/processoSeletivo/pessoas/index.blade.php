@@ -34,15 +34,15 @@
     </div>
 
     {{-- <a href="{{ route('ps.create') }}" class="btn btn-outline-success col-lg-1" style="margin-left: 10px">Cadastrar</a> --}}
-
+    
     <div class="card" style="margin: 10px">
         <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tipo de Documento</th>
                     <th>Documento</th>
                     <th>Nome</th>
+                    <th style="width: 50%">Processo Seletivo</th>
                     <th>Curso</th>
                     <th>Município</th>
                     
@@ -53,9 +53,9 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->tipo_documento->nome }}</td>
-                        <td>{{ $item->numero_documento }}</td>
+                        <td>{{ $item->tipo_documento->nome." : ".$item->numero_documento }}</td>
                         <td>{{ $item->nome }}</td>
+                        <td>{{ $item->curso->processo_seletivo->titulo }}</td>
                         <td>{{ $item->curso->titulo }}</td>
                         <td>{{ $item->curso->municipio->nome }}</td>
                         {{-- <td>
