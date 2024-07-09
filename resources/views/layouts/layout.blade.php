@@ -177,7 +177,7 @@
 							<a href="/processoseletivo/pessoas" class="nav-link">
 								<i class="ph-magnifying-glass"></i>
 								<span>
-									Pesquisar inscrito
+									Pesquisar inscrito <span class="badge bg-primary align-self-center rounded-pill ms-auto">Novo</span>
 									{{-- <span class="d-block fw-normal opacity-50">No pending orders</span> --}}
 								</span>
 							</a>

@@ -28,13 +28,15 @@ class ProcessoSeletivoInscricaoController extends Controller
                     ->distinct('processo_seletivo_inscricaos.id')
                     ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
                     ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
+                    ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
                     ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
-                    ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status')
+                    ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
                     ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
                     ->orderBy('processo_seletivo_inscricao_notas.status')
                     ->orderBy('processo_seletivo_inscricaos.nome')
                     ->paginate(15);
         // $data = ProcessoSeletivoInscricao::orderBy('nome')->paginate(15);
+        // return $data;
         return view('processoSeletivo.inscricoes.index', [
             'id_processo_seletivo' => $id_processo_seletivo,
             'data' => $data,

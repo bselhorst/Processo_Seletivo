@@ -36,8 +36,10 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tipo de Documento</th>
-                    <th>Número</th>
+                    <th>Documento</th>
+                    {{-- <th>Número</th> --}}
+                    <th>Curso</th>
+                    <th>Município</th>
                     <th>Nome</th>
                     <th>Status</th>
                     <th class="text-center">Ações</th>
@@ -47,8 +49,9 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->tipo_documento }}</td>
-                        <td>{{ $item->numero_documento }}</td>
+                        <td>{{ $item->tipo_documento.": ".$item->numero_documento }}</td>
+                        <td>{{ $item->curso }}</td>
+                        <td>{{ $item->cidade }}</td>
                         <td>{{ $item->nome }}</td>
                         <td>
                             @if (@$item->status)
