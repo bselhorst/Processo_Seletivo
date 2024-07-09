@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\URL;
         @method('patch')
         <div class="card-body">            
             <div class="fw-bold border-bottom pb-2 mb-3 ">Publicar Resultado</div>
-            {{-- <p class="mb-4  offset-lg-1">Adicione o PDF do resultado abaixo.</p>
+            <p class="mb-4  offset-lg-1">Adicione o PDF do resultado abaixo.</p>
             <div class="row mb-3">
                 <label class="col-form-label col-lg-2 offset-lg-1">Resultado <code>(PDF)</code> <span class="text-danger">*</span></label>
                 <div class="col-lg-6">
@@ -20,16 +20,16 @@ use Illuminate\Support\Facades\URL;
                 </div>
                 <div class="col-lg-3">
                     @if (@$data)
-                        @if (Storage::get("public/editais/$data->id/resultado.pdf"))
-                            <a href="/storage/editais/{{$data->id}}/resultado.pdf" target="_blank" class="btn btn-outline-danger flex-column py-2 mx-2">
+                        @if (Storage::get("public/editais/$id_processo_seletivo/resultado.pdf"))
+                            <a href="/storage/editais/{{$id_processo_seletivo}}/resultado.pdf" target="_blank" class="btn btn-outline-danger flex-column py-2 mx-2">
                                 <i class="ph-file-pdf ph-2x mb-1"></i>
                                 Ver Resultado Atual
                             </a>
                         @endif
                     @endif
                 </div>
-            </div> --}}
-            <div class="row mb-3">
+            </div>
+            {{-- <div class="row mb-3">
                 <div class="col-lg-12">
                     <table class="table">
                         <thead>
@@ -39,8 +39,6 @@ use Illuminate\Support\Facades\URL;
                                 <th>Nome</th>
                                 <th>Idade</th>
                                 <th>PCD</th>
-                                {{-- <th>Curso</th>
-                                <th>Município</th> --}}
                                 <th>Titulação</th>
                                 <th>Qualificação</th>
                                 <th>Exp. Profissional</th>
@@ -65,8 +63,6 @@ use Illuminate\Support\Facades\URL;
                                     <td>{{ $item->inscricao->nome }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->inscricao->data_nascimento)->diff(\Carbon\Carbon::now())->format('%y anos')  }}</td>
                                     <td>{{ $item->inscricao->deficiencia == 1 ? 'SIM' : 'NÃO' }}</td>
-                                    {{-- <td>{{ $item->inscricao->curso->titulo }}</td>
-                                    <td>{{ $item->inscricao->curso->municipio->nome }}</td> --}}
                                     <td>{{ $item->nota_titulacao }}</td>
                                     <td>{{ $item->nota_qualificacao }}</td>
                                     <td>{{ $item->nota_exp_profissional }}</td>
@@ -75,12 +71,11 @@ use Illuminate\Support\Facades\URL;
                                     
                                 @php($old_titulo = $item->inscricao->curso->titulo)
                                 @php($classificacao++)
-                                {{-- {{ $old_titulo = $item->inscricao->curso->titulo; }} --}}
                             @endforeach
                         </tbody>
                     </table>
                 </div>                
-            </div>
+            </div> --}}
 
             <div class="card-footer text-end">
                 <a href="{{ route('ps.index') }}" class="btn btn-danger">Cancelar </a>

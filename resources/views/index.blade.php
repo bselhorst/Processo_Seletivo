@@ -84,7 +84,7 @@
 									</a>
 								</div>
 							</div>
-							@if ($item->resultado)
+							{{-- @if ($item->resultado)
 								<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center bg-success bg-opacity-10">
 									<div class="mt-2 mt-sm-0">
 										<b>RESULTADO DA ANÁLISE CURRICULAR</b>
@@ -96,7 +96,7 @@
 										</a>
 									</div>
 								</div>
-							@endif							
+							@endif							 --}}
 						@endif
 					</div>
 				</div>

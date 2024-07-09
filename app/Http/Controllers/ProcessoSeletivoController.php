@@ -322,9 +322,9 @@ class ProcessoSeletivoController extends Controller
     }
 
     public function resultadoStore(Request $request, $id){
-        // if($request->file){
-        //     $request->file->storeAs("public/editais/$id", 'resultado.pdf');
-        // }
+        if($request->file){
+            $request->file->storeAs("public/editais/$id", 'resultado.pdf');
+        }
         $request["resultado"] = true;
         $validatedData = $request->validate([
             'resultado' => 'required',
