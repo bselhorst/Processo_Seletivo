@@ -30,7 +30,7 @@
                                         </optgroup>
                                     @endif
                                     {{ $old = $vaga->processo_seletivo }}
-                                    <optgroup label="{{ $vaga->processo_seletivo }}">
+                                    <optgroup label="{{ \Illuminate\Support\Str::limit($vaga->processo_seletivo,100, $end='...') }}">
                                 @endif
                                 <option value="{{ $vaga->id }}" {{ @$id_vaga == $vaga->id ? 'selected' : '' }}>
                                     {{ $vaga->municipio }} / {{ $vaga->titulo }}</option>
@@ -149,6 +149,30 @@
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_documento[]" class="file-input-required"
                             accept=".pdf" multiple>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Comprovante de endereço <code>(PDF)</code></h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Exemplo de documentos: Conta de água, luz, telefone ou qualquer outro que comprove residência.</p>
+                        <p class="fw-semibold">Pré visualização</p>
+                        <input type="file" name="anexo_comprovante_endereco[]" class="file-input-required"
+                            accept=".pdf">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Declaração de Disponibilidade <code>(PDF)</code></h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
+                        <p class="fw-semibold">Pré visualização</p>
+                        <input type="file" name="anexo_declaracao_disponibilidade[]" class="file-input-required"
+                            accept=".pdf">
                     </div>
                 </div>
 

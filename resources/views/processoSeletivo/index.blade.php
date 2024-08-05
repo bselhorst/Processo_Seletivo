@@ -82,6 +82,11 @@
                                             <i class="ph-user-minus me-2"></i>
                                             Download dos Indeferidos
                                         </a>
+                                        <a href="{{ route('pscom.index', $item->id) }}" class="dropdown-item">
+                                            <i class="ph-megaphone me-2"></i>
+                                            Comunicados
+                                            <span class="badge bg-primary align-self-center rounded-pill ms-auto">Novo</span>
+                                        </a>
                                         @if (strtotime($item->data_encerramento) < strtotime('now'))
                                             <a href="{{ route('ps.resultadoForm', $item->id) }}" class="dropdown-item">
                                                 <i class="ph-file-plus me-2"></i>

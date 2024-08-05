@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuxiliarMunicipioController;
 use App\Http\Controllers\AuxiliarTipoDocumentoController;
 use App\Http\Controllers\ProcessoSeletivoController;
+use App\Http\Controllers\ProcessoSeletivoComunicadoController;
 use App\Http\Controllers\ProcessoSeletivoCursoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoNotaController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\UsuariosController;
 use Illuminate\Support\Facades\Route;
 use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
+use App\Models\ProcessoSeletivoComunicado;
 use App\Models\ProcessoSeletivoCurso;
 use App\Models\ProcessoSeletivoInscricao;
 use App\Models\ProcessoSeletivoInscricaoNota;
@@ -85,6 +87,18 @@ Route::prefix('processoseletivo')->group(function () {
     Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
 
     //CURSOS COM UM PREFIXO DE CURSOS
+    Route::prefix('{id_processo_seletivo}/comunicados')->group(function () {
+        Route::get('/', [ProcessoSeletivoComunicadoController::class, 'index'])->middleware(['auth', 'verified'])->name('pscom.index');
+        // Route::post('/search', [ProcessoSeletivoCursoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pc.indexSearch');
+        // Route::get('/form', [ProcessoSeletivoCursoController::class, 'create'])->middleware(['auth', 'verified'])->name('pc.create');
+        Route::get('/{id}', [ProcessoSeletivoComunicadoController::class, 'edit'])->middleware(['auth', 'verified'])->name('pscom.edit');
+        Route::post('/', [ProcessoSeletivoComunicadoController::class, 'store'])->middleware(['auth', 'verified'])->name('pscom.store');
+        Route::patch('/{id}', [ProcessoSeletivoComunicadoController::class, 'update'])->middleware(['auth', 'verified'])->name('pscom.update');
+        Route::delete('/{id}', [ProcessoSeletivoComunicadoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('pscom.destroy');
+    });
+
+
+    //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/cursos')->group(function () {
         Route::get('/', [ProcessoSeletivoCursoController::class, 'index'])->middleware(['auth', 'verified'])->name('pc.index');
         Route::post('/search', [ProcessoSeletivoCursoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pc.indexSearch');
@@ -117,6 +131,7 @@ Route::get('/edital/{id}', function ($id) {
     return view('edital', [
         'data' => ProcessoSeletivo::findOrFail($id),
         'data_curso' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->get(),
+        'comunicados' => ProcessoSeletivoComunicado::where("id_processo_seletivo", $id)->get(),
         'salario' => ProcessoSeletivoCurso::where("id_processo_seletivo", $id)->where("salario", ">", 0)->get(),
     ]);
 })->name('edital');
