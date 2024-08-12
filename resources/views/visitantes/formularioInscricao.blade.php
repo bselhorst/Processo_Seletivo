@@ -32,7 +32,7 @@
                                     {{ $old = $vaga->processo_seletivo }}
                                     <optgroup label="{{ \Illuminate\Support\Str::limit($vaga->processo_seletivo,100, $end='...') }}">
                                 @endif
-                                <option value="{{ $vaga->id }}" {{ @$id_vaga == $vaga->id ? 'selected' : '' }}>
+                                <option value="{{ $vaga->id }}" {{ @$id_vaga == $vaga->id ? 'selected' : '' }} label="{{ \Illuminate\Support\Str::limit($vaga->municipio." / ".$vaga->titulo,150, $end='...') }}">
                                     {{ $vaga->municipio }} / {{ $vaga->titulo }}</option>
                             @endforeach
                             </optgroup>

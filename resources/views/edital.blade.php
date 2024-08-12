@@ -28,7 +28,7 @@
                         <div class="mb-3 text-center">
                             <i class="ph-calendar ph-2x mb-1"></i>
                             <h3 class="mb-0 fw-medium text-center pb-2">Período de Inscrições</h3>
-                            <p style="font-size: 16px">De {{ date('d/m/Y', strtotime($data->data_abertura)) }} até {{ date('d/m/Y', strtotime($data->encerramento)) }} às {{ date('H:i:s', strtotime($data->encerramento)) }}, horário de Rio Branco/AC</p>
+                            <p style="font-size: 16px">De {{ date('d/m/Y', strtotime($data->data_abertura)) }} até {{ date('d/m/Y', strtotime($data->data_encerramento)) }} às {{ date('H:i:s', strtotime($data->encerramento)) }}, horário de Rio Branco/AC</p>
                             
                         </div>
                     </div>
@@ -37,60 +37,23 @@
         </div>
     </div>
     <hr>
-    
-    <div class="tab-content">
-        <div class="tab-pane fade show active" id="course-overview">
-            <div class="card-body">
-                <h3 class="mb-0 fw-medium text-center pb-4">CARGOS</h3>
-                @if (count(@$data->cursos) > 0)
-                    <div class="card">
-                        <div class="table-responsive border rounded">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Município</th>
-                                        <th>Área de Atuação</th>
-                                        <th>Perfil / Profissional</th>
-                                        @if (count($salario) > 0)
-                                            <th>Remuneração</th>
-                                        @endif
-                                        <th>Vagas</th>
-                                        @if (date(strtotime($data->data_encerramento)) >= time())
-                                            @if (date(strtotime($data->data_abertura)) <= time())
-                                                <th class="text-center">Ações</th>
-                                            @endif
-                                        @endif 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($data->cursos as $item)
-                                        <tr>
-                                            <td>{{ $item->id }}</td>
-                                            <td>{{ $item->municipio->nome }}</td>
-                                            <td>{{ $item->titulo }}</td>
-                                            <td>{{ $item->descricao }}</td>
-                                            @if (count($salario) > 0)
-                                                <td>{{ $item->salario }}</td>
-                                            @endif                                        
-                                            <td>{{ ($item->vagas > 0)? $item->vagas : 'Cadastro de Reserva' }}</td>
-                                            @if (date(strtotime($data->data_encerramento)) >= time())
-                                                @if (date(strtotime($data->data_abertura)) <= time())
-                                                    <td class="text-center">                                          
-                                                        <a href="{{ route('inscricao', ['id' => $data->id,'id_curso' => $item->id]) }}">Inscrição</a>                                                                                                                                 
-                                                    </td>
-                                                @endif
-                                            @endif 
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>  
-                @endif
+
+    {{-- @if (Storage::get("public/editais/$data->id/resultado.pdf"))
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="course-overview">
+                <div class="card-body">
+                    <h3 class="mb-0 fw-medium text-center pb-4">RESULTADO</h3>
+                    
+                    @if (@$data)
+                            <div class="card p-3">
+                                <h4 class="mb-0 fw-medium"><a href="/storage/editais/{{$data->id}}/resultado.pdf" target="_blank"></a></h4>
+                            </div>                        
+                    @endif 
+                </div>
             </div>
         </div>
-    </div>
+    @endif --}}
+    
     <div class="tab-content">
         <div class="tab-pane fade show active" id="course-overview">
             <div class="card-body">
@@ -111,6 +74,7 @@
             </div>
         </div>
     </div>
+
     <div class="tab-content">
         <div class="tab-pane fade show active" id="course-overview">
             <div class="card-body">
@@ -136,6 +100,66 @@
             </div>
         </div>
     </div>
+    
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="course-overview">
+            <div class="card-body">
+                <h3 class="mb-0 fw-medium text-center pb-4">CARGOS</h3>
+                @if (count(@$data->cursos) > 0)
+                    <div class="card">
+                        <div class="table-responsive border rounded">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Município / Regional</th>
+                                        <th>Área de Atuação</th>
+                                        <th>Perfil / Profissional</th>
+                                        @if (count($salario) > 0)
+                                            <th>Remuneração</th>
+                                        @endif
+                                        <th>Vagas</th>
+                                        @if (date(strtotime($data->data_encerramento)) >= time())
+                                            @if (date(strtotime($data->data_abertura)) <= time())
+                                                <th class="text-center">Ações</th>
+                                            @endif
+                                        @endif 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($data->cursos as $item)
+                                        <tr>
+                                            <td>{{ $item->id }}</td>
+                                            <td>
+                                                {{ $item->municipio->nome }} 
+                                                @if (@$item->municipio->descricao)
+                                                    <i class='ph-question ms-2' data-bs-popup='tooltip' data-bs-placement='top' data-bs-original-title='{{ @$item->municipio->descricao }}'></i>
+                                                @endif
+                                            </td>
+                                            <td>{{ $item->titulo }}</td>
+                                            <td>{{ $item->descricao }}</td>
+                                            @if (count($salario) > 0)
+                                                <td>{{ $item->salario }}</td>
+                                            @endif                                        
+                                            <td>{{ ($item->vagas > 0)? $item->vagas : 'Cadastro de Reserva' }}</td>
+                                            @if (date(strtotime($data->data_encerramento)) >= time())
+                                                @if (date(strtotime($data->data_abertura)) <= time())
+                                                    <td class="text-center">                                          
+                                                        <a href="{{ route('inscricao', ['id' => $data->id,'id_curso' => $item->id]) }}">Inscrição</a>                                                                                                                                 
+                                                    </td>
+                                                @endif
+                                            @endif 
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                @endif
+            </div>
+        </div>
+    </div>
+    
     {{-- <hr> --}}
     {{-- <div class="tab-content">
         <div class="tab-pane fade show active" id="course-overview">

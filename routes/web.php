@@ -169,13 +169,25 @@ Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = nul
                     ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
                     ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
                     ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
-                    ->whereRaw("processo_seletivos.data_abertura < STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')" , Carbon::now('America/Rio_branco')->format('Y-m-d H:i'))
-                    ->whereRaw("processo_seletivos.data_encerramento >= STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')" , Carbon::now('America/Rio_branco')->format('Y-m-d H:i'))
+                    ->whereRaw("processo_seletivos.data_abertura <= CURRENT_TIMESTAMP")
+                    ->whereRaw("processo_seletivos.data_encerramento >= CURRENT_TIMESTAMP")
                     ->get(),
         'id_vaga' => $id_curso,
         'tipo_documentos' => AuxiliarTipoDocumento::orderBy("nome")->get(),
     ]);
 })->name('inscricao');
+
+Route::get('/inscricao/{id?}/{id_curso?}/teste', function ($id = null, $id_curso = null) {
+    return DB::table('processo_seletivo_cursos')
+                    ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
+                    ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
+                    ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
+                    ->whereRaw("processo_seletivos.data_abertura <= CURRENT_TIMESTAMP")
+                    ->whereRaw("processo_seletivos.data_encerramento >= CURRENT_TIMESTAMP")
+                    ->get();
+                    
+})->name('inscricao-teste');
+
 Route::post('/inscricao', [ProcessoSeletivoInscricaoController::class, 'store'])->name('inscricao.store');
 
 // //ROTA RESULTADO
