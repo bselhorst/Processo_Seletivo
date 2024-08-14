@@ -34,13 +34,39 @@
                         <p style="text-align: justify">Mensagem: <span class="fw-semibold">{{ @$data_nota->mensagem }}</span></p> 
                     </div>
                     <?php
+                        $anexo_comprovante_endereco = Storage::files("public/inscricao/$data->id/comprovante_endereco");
                         $anexo_curriculo = Storage::files("public/inscricao/$data->id/curriculos");
+                        $anexo_declaracao_disponibilidade = Storage::files("public/inscricao/$data->id/declaracao_disponibilidade");
                         $anexo_documentos = Storage::files("public/inscricao/$data->id/documentos");
                         $anexo_titulacao = Storage::files("public/inscricao/$data->id/titulacao");
                         $anexo_qualificacao = Storage::files("public/inscricao/$data->id/qualificacao");
                         $anexo_experiencia_profissional = Storage::files("public/inscricao/$data->id/experiencia_profissional");
                     ?>
-                                    
+                            
+                    @if (@$anexo_comprovante_endereco) 
+                        <div class="mt-1 mb-4">
+                            <h6>Comprovante de Endereço</h6>
+                            @foreach ($anexo_comprovante_endereco as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if (@$anexo_declaracao_disponibilidade) 
+                        <div class="mt-1 mb-4">
+                            <h6>Declaração de Disponibilidade</h6>
+                            @foreach ($anexo_declaracao_disponibilidade as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="mt-1 mb-4">
                         <h6>Documentos</h6>
                         @if (@$anexo_documentos) 
