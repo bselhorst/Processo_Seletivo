@@ -20,7 +20,7 @@
                         <h6>Dados do Inscrito</h6>
                         <p style="text-align: justify">Processo Seltivo: <span class="fw-semibold">{{ $data->curso->processo_seletivo->titulo }}</span></p>
                         <p style="text-align: justify">Vaga: <span class="fw-semibold">{{ $data->curso->titulo }}</span></p>
-			            <p style="text-align: justify">Data de Nascimento: <span class="fw-semibold">{{ $data->data_nascimento }}</span></p>
+			            <p style="text-align: justify">Data de Nascimento: <span class="fw-semibold">{{ date('d/m/Y', strtotime($data->data_nascimento)) }}</span></p>
                         <p style="text-align: justify">Documento: <span class="fw-semibold">({{ $data->tipo_documento->nome }}) {{ $data->numero_documento }}</span></p>
                         <p style="text-align: justify">Endereço: <span class="fw-semibold">{{ $data->endereco }}</span></p>
                         @if ($data->bairro)
@@ -34,6 +34,7 @@
                         <p style="text-align: justify">Mensagem: <span class="fw-semibold">{{ @$data_nota->mensagem }}</span></p> 
                     </div>
                     <?php
+                        $anexo_carta_intencao = Storage::files("public/inscricao/$data->id/carta_intencao");
                         $anexo_comprovante_endereco = Storage::files("public/inscricao/$data->id/comprovante_endereco");
                         $anexo_curriculo = Storage::files("public/inscricao/$data->id/curriculos");
                         $anexo_declaracao_disponibilidade = Storage::files("public/inscricao/$data->id/declaracao_disponibilidade");
@@ -43,30 +44,6 @@
                         $anexo_experiencia_profissional = Storage::files("public/inscricao/$data->id/experiencia_profissional");
                     ?>
                             
-                    @if (@$anexo_comprovante_endereco) 
-                        <div class="mt-1 mb-4">
-                            <h6>Comprovante de Endereço</h6>
-                            @foreach ($anexo_comprovante_endereco as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    @if (@$anexo_declaracao_disponibilidade) 
-                        <div class="mt-1 mb-4">
-                            <h6>Declaração de Disponibilidade</h6>
-                            @foreach ($anexo_declaracao_disponibilidade as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        </div>
-                    @endif
-
                     <div class="mt-1 mb-4">
                         <h6>Documentos</h6>
                         @if (@$anexo_documentos) 
@@ -95,6 +72,95 @@
                         @endif
                     </div>
                                         
+                    {{-- @if (@$anexo_comprovante_endereco) 
+                        <div class="mt-1 mb-4">
+                            <h6>Comprovante de Endereço</h6>
+                            @foreach ($anexo_comprovante_endereco as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if (@$anexo_declaracao_disponibilidade) 
+                        <div class="mt-1 mb-4">
+                            <h6>Declaração de Disponibilidade</h6>
+                            @foreach ($anexo_declaracao_disponibilidade as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        </div>
+                    @endif --}}
+
+                    <div class="mt-1 mb-4">
+                        <h6>Declaração de Disponibilidade</h6>
+                        @if (@$anexo_declaracao_disponibilidade)
+                            @foreach ($anexo_declaracao_disponibilidade as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        @else
+                            Não Possui
+                        @endif
+                        {{-- <div class="col-lg-1" style="padding-top: 10px">
+                            <div class="mb-4">
+                                <label class="form-label">Pontuação</label>
+                                <input type="number" min=0 name="nota_declaracao_disponibilidade" class="form-control" value="{{ @$data_nota? $data_nota->nota_declaracao_disponibilidade : 0 }}">
+                                <span class="form-text"></span>
+                            </div>
+                        </div> --}}
+                    </div>
+
+                    <div class="mt-1 mb-4">
+                        <h6>Comprovante de Endereço</h6>
+                        @if (@$anexo_comprovante_endereco)
+                            @foreach ($anexo_comprovante_endereco as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        @else
+                            Não Possui
+                        @endif
+                        <div class="col-lg-1" style="padding-top: 10px">
+                            <div class="mb-4">
+                                <label class="form-label">Pontuação</label>
+                                {{-- <input type="number" min=0 {{ ($anexo_titulacao)?'':'max=0' }} name="nota_titulacao" class="form-control" value="0"> --}}
+                                <input type="number" min=0 name="nota_comprovante_endereco" class="form-control" value="{{ @$data_nota? $data_nota->nota_comprovante_endereco : 0 }}">
+                                <span class="form-text"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-1 mb-4">
+                        <h6>Carta de Intenção</h6>
+                        @if (@$anexo_carta_intencao)
+                            @foreach ($anexo_carta_intencao as $documento)
+                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                <i class="ph-file-pdf ph-2x mb-1"></i>
+                                Ver Arquivo
+                            </a>
+                            @endforeach
+                        @else
+                            Não Possui
+                        @endif
+                        <div class="col-lg-1" style="padding-top: 10px">
+                            <div class="mb-4">
+                                <label class="form-label">Pontuação</label>
+                                {{-- <input type="number" min=0 {{ ($anexo_titulacao)?'':'max=0' }} name="nota_titulacao" class="form-control" value="0"> --}}
+                                <input type="number" min=0 name="nota_carta_intencao" class="form-control" value="{{ @$data_nota? $data_nota->nota_carta_intencao : 0 }}">
+                                <span class="form-text"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mt-1 mb-4">
                         <h6>Titulação</h6>
                         @if (@$anexo_titulacao)

@@ -166,12 +166,24 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Declaração de Disponibilidade <code>(PDF)</code></h5>
+                        <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
                     </div>
                     <div class="card-body">
                         <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_declaracao_disponibilidade[]" class="file-input-required"
+                            accept=".pdf">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Carta de intenção <code>(PDF)</code></h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Especifica as razões pelas quais deseja ser tutor do cursp: organização das ideias/concepções (coerência e coesão); correção e propriedade da redação; capacidade de síntese. Que consta no anexo VI.</p>
+                        <p class="fw-semibold">Pré visualização</p>
+                        <input type="file" name="anexo_carta_intencao[]" class="file-input-required"
                             accept=".pdf">
                     </div>
                 </div>

@@ -42,6 +42,8 @@ class ProcessoSeletivoInscricaoNotaController extends Controller
         $validatedData = $request->validate([
             'id_inscricao' => 'required',
             'status' => 'required',            
+            'nota_comprovante_endereco' => '',
+            'nota_carta_intencao' => '',
             'nota_titulacao' => 'required',
             'nota_qualificacao' => 'required',
             'nota_exp_profissional' => 'required',
@@ -86,7 +88,9 @@ class ProcessoSeletivoInscricaoNotaController extends Controller
     public function update(Request $request, $id_processo_seletivo, $id)
     {
         $validatedData = $request->validate([
-            'status' => 'required',            
+            'status' => 'required',
+            'nota_comprovante_endereco' => '',
+            'nota_carta_intencao' => '',            
             'nota_titulacao' => 'required',
             'nota_qualificacao' => 'required',
             'nota_exp_profissional' => 'required',

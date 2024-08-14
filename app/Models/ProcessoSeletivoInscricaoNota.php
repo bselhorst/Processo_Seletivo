@@ -10,7 +10,7 @@ class ProcessoSeletivoInscricaoNota extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id_inscricao', 'status', 'nota_titulacao', 'nota_qualificacao', 'nota_exp_profissional', 'mensagem', 'analisado_por'];
+    protected $fillable = ['id_inscricao', 'status', 'nota_comprovante_endereco', 'nota_carta_intencao', 'nota_titulacao', 'nota_qualificacao', 'nota_exp_profissional', 'mensagem', 'analisado_por'];
 
     // public function tipo_documento(){
     //     return $this->belongsTo(ProcessoSeletivoInscricao::class, 'id_inscricao');

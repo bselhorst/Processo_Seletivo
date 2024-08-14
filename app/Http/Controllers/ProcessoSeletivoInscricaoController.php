@@ -91,6 +91,7 @@ class ProcessoSeletivoInscricaoController extends Controller
             'anexo_documento' => 'required',
             'anexo_comprovante_endereco' => 'required',
             'anexo_declaracao_disponibilidade' => 'required',
+            'anexo_carta_intencao' => 'required',
             'anexo_curriculo' => '',
             'anexo_titulacao' => 'required',
             'anexo_qualificacao' => 'required',
@@ -124,6 +125,14 @@ class ProcessoSeletivoInscricaoController extends Controller
             {
                 $fileName = \Str::random(128) . '.'.$file->extension();
                 $file->storeAs("public/inscricao/$new->id/declaracao_disponibilidade", "$fileName");
+            }
+        }
+
+        if (@$request->file('anexo_carta_intencao')){
+            foreach($request->file('anexo_carta_intencao') as $key => $file)
+            {
+                $fileName = \Str::random(128) . '.'.$file->extension();
+                $file->storeAs("public/inscricao/$new->id/carta_intencao", "$fileName");
             }
         }
 
