@@ -89,9 +89,9 @@ class ProcessoSeletivoInscricaoController extends Controller
             'email' => 'required',
             'data_nascimento' => 'required',
             'anexo_documento' => 'required',
-            'anexo_comprovante_endereco' => 'required',
-            'anexo_declaracao_disponibilidade' => 'required',
-            'anexo_carta_intencao' => 'required',
+            'anexo_comprovante_endereco' => '',
+            'anexo_declaracao_disponibilidade' => '',
+            'anexo_carta_intencao' => '',
             'anexo_curriculo' => '',
             'anexo_titulacao' => 'required',
             'anexo_qualificacao' => 'required',
@@ -184,9 +184,10 @@ class ProcessoSeletivoInscricaoController extends Controller
             }
         }
 
-        Mail::to($request->email)->send(new Confirmacao($validatedData));
+        // Mail::to($request->email)->send(new Confirmacao($validatedData));
 
-        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso. A confirmação da inscrição foi enviada para o seu email!');
+        // return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso. A confirmação da inscrição foi enviada para o seu email!');
+        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso.');
     }
 
     /**

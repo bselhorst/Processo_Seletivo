@@ -172,6 +172,7 @@ Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = nul
                     ->whereRaw("processo_seletivos.data_abertura <= CURRENT_TIMESTAMP")
                     ->whereRaw("processo_seletivos.data_encerramento >= CURRENT_TIMESTAMP")
                     ->get(),
+        'id_processo' => $id,
         'id_vaga' => $id_curso,
         'tipo_documentos' => AuxiliarTipoDocumento::orderBy("nome")->get(),
     ]);

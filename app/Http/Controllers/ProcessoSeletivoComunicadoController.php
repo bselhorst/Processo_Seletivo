@@ -18,7 +18,7 @@ class ProcessoSeletivoComunicadoController extends Controller
      */
     public function index(int $id_processo_seletivo)
     {
-        $data = ProcessoSeletivoComunicado::orderBy('id', 'DESC')->paginate(15);
+        $data = ProcessoSeletivoComunicado::where('id_processo_seletivo', $id_processo_seletivo)->orderBy('id', 'DESC')->paginate(15);
         $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
         return view('processoSeletivo.comunicados.index', [
             'data' => $data,            

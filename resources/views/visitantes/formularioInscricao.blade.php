@@ -16,12 +16,13 @@
         <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" enctype='multipart/form-data'
             novalidate>
             @csrf
+
             <div class="card-body">
                 <div class="fw-bold border-bottom pb-2 mb-3">Dados do Processo Seletivo</div>
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Vaga<span class="text-danger">*</span></label>
                     <div class="col-lg-9">
-                        <select name="id_processo_seletivo_curso" class="form-select" required="">
+                        <select name="id_processo_seletivo_curso" onchange="teste(this.value)" class="form-select" required="">
                             <option value="">Escolha uma vaga abaixo</option>
                             {{ $old = '' }}
                             @foreach ($vagas as $vaga)
@@ -152,42 +153,85 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Comprovante de endereço <code>(PDF)</code></h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-3">Exemplo de documentos: Conta de água, luz, telefone ou qualquer outro que comprove residência.</p>
-                        <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_comprovante_endereco[]" class="file-input-required"
-                            accept=".pdf">
-                    </div>
-                </div>
+                @if (@$id_processo == 15)
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
-                        <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_declaracao_disponibilidade[]" class="file-input-required"
+                    <div class="card div-comprovante">
+                        <div class="card-header">
+                            <h5 class="mb-0">Comprovante de endereço <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Exemplo de documentos: Conta de água, luz, telefone ou qualquer outro que comprove residência.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_comprovante_endereco" name="anexo_comprovante_endereco[]" class="file-input-required"
                             accept=".pdf">
+                        </div>
                     </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Carta de intenção <code>(PDF)</code></h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-3">Especifica as razões pelas quais deseja ser tutor do cursp: organização das ideias/concepções (coerência e coesão); correção e propriedade da redação; capacidade de síntese. Que consta no anexo VI.</p>
-                        <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_carta_intencao[]" class="file-input-required"
+                    
+                    <div class="card div-declaracao">
+                        <div class="card-header">
+                            <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_declaracao_disponibilidade" name="anexo_declaracao_disponibilidade[]" class="file-input-required"
                             accept=".pdf">
+                        </div>
                     </div>
-                </div>
+                    
+                    <div class="card div-carta">
+                        <div class="card-header">
+                            <h5 class="mb-0">Carta de intenção <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Especifica as razões pelas quais deseja ser tutor do cursp: organização das ideias/concepções (coerência e coesão); correção e propriedade da redação; capacidade de síntese. Que consta no anexo VI.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_carta_intencao" name="anexo_carta_intencao[]" class="file-input-required"
+                            accept=".pdf">
+                        </div>
+                    </div>  
 
+                @else
+
+                    <div class="card div-comprovante d-none">
+                        <div class="card-header">
+                            <h5 class="mb-0">Comprovante de endereço <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Exemplo de documentos: Conta de água, luz, telefone ou qualquer outro que comprove residência.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_comprovante_endereco" name="anexo_comprovante_endereco[]" class="file-input"
+                            accept=".pdf">
+                        </div>
+                    </div>
+                    
+                    <div class="card div-declaracao d-none">
+                        <div class="card-header">
+                            <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_declaracao_disponibilidade" name="anexo_declaracao_disponibilidade[]" class="file-input"
+                            accept=".pdf">
+                        </div>
+                    </div>
+                    
+                    <div class="card div-carta d-none">
+                        <div class="card-header">
+                            <h5 class="mb-0">Carta de intenção <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Especifica as razões pelas quais deseja ser tutor do cursp: organização das ideias/concepções (coerência e coesão); correção e propriedade da redação; capacidade de síntese. Que consta no anexo VI.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_carta_intencao" name="anexo_carta_intencao[]" class="file-input"
+                            accept=".pdf">
+                        </div>
+                    </div>  
+
+                @endif
+                
+                
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">Escolaridade (Graduação, Especialização, Mestrado, Doutorado) <code>(PDF)</code>
@@ -245,11 +289,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-
             let inputs = document.querySelectorAll('input[name="deficiencia"]');
             let deficienciaId = document.getElementById('anexo_deficiencia');
-
-
 
             inputs.forEach(function(input) {
                 input.addEventListener('change', function() {
@@ -266,6 +307,45 @@
                 });
             });
 
+            
+
         });
+
+        function teste(id_curso){
+            let anexoComprovante = document.getElementById('anexo_comprovante_endereco');
+            let anexoDeclaracao = document.getElementById('anexo_declaracao_disponibilidade');
+            let anexoCarta = document.getElementById('anexo_carta_intencao');
+
+            if (id_curso == 932 || id_curso == 933){
+                document.querySelector('.div-comprovante').classList.remove('d-none');
+                document.querySelector('.div-declaracao').classList.remove('d-none');
+                document.querySelector('.div-carta').classList.remove('d-none');
+                anexoComprovante.classList.add('file-input-required');
+                anexoDeclaracao.classList.add('file-input-required');
+                anexoCarta.classList.add('file-input-required');
+            }else{
+                document.querySelector('.div-comprovante').classList.add('d-none');
+                document.querySelector('.div-declaracao').classList.add('d-none');
+                document.querySelector('.div-carta').classList.add('d-none');
+                anexoComprovante.classList.remove('file-input-required');
+                anexoDeclaracao.classList.remove('file-input-required');
+                anexoCarta.classList.remove('file-input-required');
+            }
+        }
+
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     let processo = document.querySelectorAll('input[name="id_processo_seletivo_curso"]')
+        //     // let processoId = document.getElementById('div_especifico')
+        //     processo.forEach(function(hidden_div){
+        //         hidden_div.addEventListener('change', function() {
+        //             alert(this.value);
+        //             // if (this.value == 1 || this.value == 2) {
+        //             //     document.querySelector('.div-especifico').classList.remove('d-none');
+        //             // }else{
+        //             //     document.querySelector('.div-especifico').classList.add('d-none');
+        //             // }
+        //         });
+        //     });
+        // });
     </script>
 @endpush
