@@ -23,8 +23,8 @@
 									<code>RESULTADO PUBLICADO</code>
 								@endif --}}
 								<ul class="list-inline list-inline-bullet text-muted mb-0">
-									<li class="list-inline-item">Abertura: {{ date('d/m/Y h:i', strtotime($item->data_abertura)) }}</li>
-									<li class="list-inline-item">Encerramento: {{ date('d/m/Y h:i', strtotime($item->data_encerramento)) }}</li>
+									<li class="list-inline-item">Abertura: {{ date('d/m/Y H:i', strtotime($item->data_abertura)) }}</li>
+									<li class="list-inline-item">Encerramento: {{ date('d/m/Y H:i', strtotime($item->data_encerramento)) }}</li>
 								</ul>
 							</div>
 							<p style="text-align: justify">{{ $item->descricao }}</p>

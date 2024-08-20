@@ -184,10 +184,10 @@ class ProcessoSeletivoInscricaoController extends Controller
             }
         }
 
-        // Mail::to($request->email)->send(new Confirmacao($validatedData));
+        Mail::to($request->email)->send(new Confirmacao($validatedData));
 
-        // return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso. A confirmação da inscrição foi enviada para o seu email!');
-        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso.');
+        return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso. A confirmação da inscrição foi enviada para o seu email!');
+        // return redirect()->route("inscricao")->with('success', 'inscrição realizada com sucesso.');
     }
 
     /**
