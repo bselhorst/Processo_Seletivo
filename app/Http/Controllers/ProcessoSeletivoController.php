@@ -162,7 +162,7 @@ class ProcessoSeletivoController extends Controller
     public function resultado($id){
         $cursos = ProcessoSeletivoCurso::where('id_processo_seletivo', $id)->orderBy('titulo')->pluck('id');
         $inscricao = ProcessoSeletivoInscricao::whereIn('id_processo_seletivo_curso', $cursos)->orderBy('id_processo_seletivo_curso')->pluck('id');
-        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional as total') )
+        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional + nota_comprovante_endereco + nota_carta_intencao as total') )
         ->whereIn('id_inscricao', $inscricao)
         ->where('status', 'Deferido')
         ->orderBy('total', 'DESC')
@@ -187,7 +187,7 @@ class ProcessoSeletivoController extends Controller
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
             "Expires"             => "0"
         );
-        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Total', 'Criado em', 'Mensagem');
+        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Nota Comprovante de Endereço', 'Nota Carta de Intenção', 'Total', 'Criado em', 'Mensagem');
 
         $callback = function() use($data, $columns) {
             $file = fopen('php://output', 'w');
@@ -202,10 +202,12 @@ class ProcessoSeletivoController extends Controller
                     $row['Nota Titulação']    = '';
                     $row['Nota Qualificação']    = '';
                     $row['Nota Exp. Profissional']    = '';
+                    $row['Nota Comprovante de Endereço']    = '';
+                    $row['Nota Carta de Intenção']    = '';
                     $row['Total']    = '';
                     $row['Criado em']    = '';
 		            $row['Mensagem']    = '';
-                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
                 }
                 $row['ID']  = $item->id_inscricao;
                 $row['Município']  = $item->inscricao->curso->municipio->nome;
@@ -214,12 +216,14 @@ class ProcessoSeletivoController extends Controller
                 $row['Nota Titulação']    = $item->nota_titulacao;
                 $row['Nota Qualificação']    = $item->nota_qualificacao;
                 $row['Nota Exp. Profissional']    = $item->nota_exp_profissional;
+                $row['Nota Comprovante de Endereço']    = $item->nota_comprovante_endereco;
+                $row['Nota Carta de Intenção']    = $item->nota_carta_intencao;
                 $row['Total']    = $item->total;
                 $row['Criado em']    = $item->inscricao->created_at;
 		        $row['Mensagem']    = $item->mensagem;
                 $old_titulo = $item->inscricao->curso->titulo;
 
-                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
             }
 
             fclose($file);
@@ -231,7 +235,7 @@ class ProcessoSeletivoController extends Controller
     public function indeferidos($id){
         $cursos = ProcessoSeletivoCurso::where('id_processo_seletivo', $id)->orderBy('titulo')->pluck('id');
         $inscricao = ProcessoSeletivoInscricao::whereIn('id_processo_seletivo_curso', $cursos)->orderBy('id_processo_seletivo_curso')->pluck('id');
-        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional as total') )
+        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional + nota_comprovante_endereco + nota_carta_intencao as total') )
         ->whereIn('id_inscricao', $inscricao)
         ->where('status', 'Indeferido')
         ->orderBy('total', 'DESC')
