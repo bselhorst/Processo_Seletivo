@@ -18,11 +18,11 @@
             <h6 class="mb-0">Filtro</h6>
         </div>
         
-        <form method="POST" action="{{ route('pi.indexSearch', $id_processo_seletivo) }}">
+        <form method="GET" action="{{ route('pi.indexSearch', $id_processo_seletivo) }}">
             @csrf
             <div class="d-flex justify-content-center border rounded p-2">
                 <div class="col-lg-5 py-2 px-3 rounded">
-                    <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisa por nome">
+                    <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisa por nome ou município">
                 </div>
                 <div class="col-lg-1 py-2 px-3 rounded">
                     <button type="submit" class="btn btn-outline-light">Pesquisar</button>
@@ -84,7 +84,9 @@
             </tbody>
         </table>
         <hr>
-        <div class="d-flex align-items-center" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
+        {{ Request()->pesquisa }}
+        @include('components.pagination', ['data' => $data, 'search' => Request()->pesquisa])
+        {{-- <div class="d-flex align-items-center" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
             <span class="text-muted me-auto">Mostrando {{ $data->firstItem() }} até {{ $data->lastItem() }} de {{ $data->total() }} registros</span>
             <span class="text-muted me-3">{{ $data->currentPage() }} de {{ $data->lastPage() }}</span>
             <ul class="pagination pagination-flat">
@@ -149,7 +151,9 @@
                     <a href="{{ $data->nextPageUrl() }}" class="page-link rounded">→</a>
                 </li>
             </ul>
-        </div>
+        </div> --}}
+        {{-- {{$data}} --}}
+        {{-- <x-pagination data="{{ $data }}" /> --}}
     </div>
     
 </div>

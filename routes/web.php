@@ -115,7 +115,7 @@ Route::prefix('processoseletivo')->group(function () {
         Route::get('/', [ProcessoSeletivoInscricaoController::class, 'index'])->middleware(['auth', 'verified'])->name('pi.index');
         Route::post('/', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
         Route::patch('/detalhes/{id}', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
-        Route::post('/search', [ProcessoSeletivoInscricaoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pi.indexSearch');
+        Route::match(array('get', 'post'), '/search', [ProcessoSeletivoInscricaoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pi.indexSearch');
         Route::get('/{id}', [ProcessoSeletivoInscricaoController::class, 'detalhes'])->middleware(['auth', 'verified'])->name('pi.detalhes');
         Route::get('/{path}', [ProcessoSeletivoInscricaoController::class, 'downloadArquivo'])->middleware(['auth', 'verified'])->name('pi.download.arquivo');
         // Route::get('/form', [ProcessoSeletivoInscricaoController::class, 'create'])->middleware(['auth', 'verified'])->name('pc.create');
