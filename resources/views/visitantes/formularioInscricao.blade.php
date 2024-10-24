@@ -22,7 +22,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Vaga<span class="text-danger">*</span></label>
                     <div class="col-lg-9">
-                        <select name="id_processo_seletivo_curso" onchange="teste(this.value)" class="form-select" required="">
+                        <select name="id_processo_seletivo_curso" onchange="esconderCampos(this.value)" class="form-select" required="">
                             <option value="">Escolha uma vaga abaixo</option>
                             {{ $old = '' }}
                             @foreach ($vagas as $vaga)
@@ -127,6 +127,8 @@
                     </div>
                 </div>
 
+                {{-- A PARTIR DAQUI COMEÇAM OS DOCUMENTOS --}}
+
                 <div class="card area_deficiencia d-none">
                     <div class="card-header">
                         <h5 class="mb-0">Documento comprovatório da deficiência <code>(PDF)</code>
@@ -153,7 +155,7 @@
                     </div>
                 </div>
 
-                @if (@$id_processo == 15)
+                {{-- @if (@$id_processo == 15)
 
                     <div class="card div-comprovante">
                         <div class="card-header">
@@ -229,31 +231,58 @@
                         </div>
                     </div>  
 
+                @endif --}}
+                
+                @if (@$id_processo == 17)
+                    <div class="card div-declaracao">
+                        <div class="card-header">
+                            <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_declaracao_disponibilidade" name="anexo_declaracao_disponibilidade[]" class="file-input-required"
+                            accept=".pdf">
+                        </div>
+                    </div>
+                @else
+                    <div class="card div-declaracao d-none">
+                        <div class="card-header">
+                            <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Declaração de disponibilidade preenchida e assinada.</p>
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" id="anexo_declaracao_disponibilidade" name="anexo_declaracao_disponibilidade[]" class="file-input"
+                            accept=".pdf">
+                        </div>
+                    </div>
                 @endif
                 
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Escolaridade (Graduação, Especialização, Mestrado, Doutorado) <code>(PDF)</code>
-                        </h5>
+                @if (@$id_processo != 17)
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Escolaridade (Graduação, Especialização, Mestrado, Doutorado) <code>(PDF)</code>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" name="anexo_titulacao[]" class="file-input-required" multiple="multiple"
+                                accept=".pdf">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_titulacao[]" class="file-input-required" multiple="multiple"
-                            accept=".pdf">
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Qualificação e aperfeiçoamento profissional <code>(PDF)</code></h5>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Qualificação e aperfeiçoamento profissional <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" name="anexo_qualificacao[]" class="file-input-required" multiple="multiple"
+                                accept=".pdf">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_qualificacao[]" class="file-input-required" multiple="multiple"
-                            accept=".pdf">
-                    </div>
-                </div>
+                @endif                
 
                 <div class="card">
                     <div class="card-header">
@@ -266,16 +295,18 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Currículo <code>(PDF)</code></h5>
+                @if (@$id_processo != 17)
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Currículo <code>(PDF)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" name="anexo_curriculo[]" class="file-input-required"
+                                multiple="multiple" accept=".pdf">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_curriculo[]" class="file-input-required"
-                            multiple="multiple" accept=".pdf">
-                    </div>
-                </div>
+                @endif
 
                 <div class="card-footer text-end">
                     <button type="submit" class="btn btn-primary">Fazer Inscrição </button>
@@ -311,25 +342,25 @@
 
         });
 
-        function teste(id_curso){
+        function esconderCampos(id_curso){
             let anexoComprovante = document.getElementById('anexo_comprovante_endereco');
             let anexoDeclaracao = document.getElementById('anexo_declaracao_disponibilidade');
             let anexoCarta = document.getElementById('anexo_carta_intencao');
 
-            if (id_curso == 932 || id_curso == 933){
-                document.querySelector('.div-comprovante').classList.remove('d-none');
+            if (id_curso == 17){
+                // document.querySelector('.div-comprovante').classList.remove('d-none');
                 document.querySelector('.div-declaracao').classList.remove('d-none');
-                document.querySelector('.div-carta').classList.remove('d-none');
-                anexoComprovante.classList.add('file-input-required');
+                // document.querySelector('.div-carta').classList.remove('d-none');
+                // anexoComprovante.classList.add('file-input-required');
                 anexoDeclaracao.classList.add('file-input-required');
-                anexoCarta.classList.add('file-input-required');
+                // anexoCarta.classList.add('file-input-required');
             }else{
-                document.querySelector('.div-comprovante').classList.add('d-none');
+                // document.querySelector('.div-comprovante').classList.add('d-none');
                 document.querySelector('.div-declaracao').classList.add('d-none');
-                document.querySelector('.div-carta').classList.add('d-none');
-                anexoComprovante.classList.remove('file-input-required');
+                // document.querySelector('.div-carta').classList.add('d-none');
+                // anexoComprovante.classList.remove('file-input-required');
                 anexoDeclaracao.classList.remove('file-input-required');
-                anexoCarta.classList.remove('file-input-required');
+                // anexoCarta.classList.remove('file-input-required');
             }
         }
 
