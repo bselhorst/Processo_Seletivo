@@ -322,6 +322,13 @@
                     </div>
                 @endif
 
+                {{-- <x-upload-file 
+                    header_description="Descrição do documento a ser adicionado" 
+                    name="Nome" 
+                    multiple=true
+                    required=true
+                /> --}}
+
                 <div class="card-footer text-end">
                     <button type="submit" class="btn btn-primary">Fazer Inscrição </button>
                 </div>
