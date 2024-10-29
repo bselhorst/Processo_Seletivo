@@ -259,6 +259,20 @@
                     </div>
                 @endif
                 
+                @if (@$id_processo == 17)
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Certificado de Ensino Médio <code>(PDF)</code>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="fw-semibold">Pré visualização</p>
+                            <input type="file" name="anexo_titulacao[]" class="file-input-required" multiple="multiple"
+                                accept=".pdf">
+                        </div>
+                    </div>
+                @endif
+
                 @if (@$id_processo != 17)
                     <div class="card">
                         <div class="card-header">

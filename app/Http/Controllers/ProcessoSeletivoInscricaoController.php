@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\Confirmacao;
 use Illuminate\Support\Facades\Mail;
 
+use App\Services\DocumentService;
+
 class ProcessoSeletivoInscricaoController extends Controller
 {
     /**
@@ -21,6 +23,13 @@ class ProcessoSeletivoInscricaoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    protected $documentService;
+
+    public function __construct(DocumentService $documentService) {
+        $this->documentService = $documentService;
+    }
+     
     public function index($id_processo_seletivo)
     {
         $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
@@ -103,86 +112,97 @@ class ProcessoSeletivoInscricaoController extends Controller
 
         $new = ProcessoSeletivoInscricao::create($validatedData);
         
-        if (@$request->file('anexo_documento')){
-            foreach($request->file('anexo_documento') as $key => $file)
-            {
-                // $fileName = time().rand(1,99).'.'.$file->extension();
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/documentos", "$fileName");
-            }
-        }
+        $this->documentService->saveDocumentEnrolled($new->id, "documentos", @$request->file('anexo_documento'));
+        $this->documentService->saveDocumentEnrolled($new->id, "comprovante_endereco", @$request->file('anexo_comprovante_endereco'));
+        $this->documentService->saveDocumentEnrolled($new->id, "declaracao_disponibilidade", @$request->file('anexo_declaracao_disponibilidade'));
+        $this->documentService->saveDocumentEnrolled($new->id, "carta_intencao", @$request->file('anexo_carta_intencao'));
+        $this->documentService->saveDocumentEnrolled($new->id, "curriculo", @$request->file('anexo_curriculo'));
+        $this->documentService->saveDocumentEnrolled($new->id, "deficiencia", @$request->file('anexo_deficiencia'));
+        $this->documentService->saveDocumentEnrolled($new->id, "escolaridade", @$request->file('anexo_escolaridade'));
+        $this->documentService->saveDocumentEnrolled($new->id, "titulacao", @$request->file('anexo_titulacao'));
+        $this->documentService->saveDocumentEnrolled($new->id, "qualificacao", @$request->file('anexo_qualificacao'));
+        $this->documentService->saveDocumentEnrolled($new->id, "experiencia_profissional", @$request->file('anexo_experiencia_profissional'));
 
-        if (@$request->file('anexo_comprovante_endereco')){
-            foreach($request->file('anexo_comprovante_endereco') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/comprovante_endereco", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_documento')){
+        //     foreach($request->file('anexo_documento') as $key => $file)
+        //     {
+        //         // $fileName = time().rand(1,99).'.'.$file->extension();
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/documentos", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_declaracao_disponibilidade')){
-            foreach($request->file('anexo_declaracao_disponibilidade') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/declaracao_disponibilidade", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_comprovante_endereco')){
+        //     foreach($request->file('anexo_comprovante_endereco') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/comprovante_endereco", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_carta_intencao')){
-            foreach($request->file('anexo_carta_intencao') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/carta_intencao", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_declaracao_disponibilidade')){
+        //     foreach($request->file('anexo_declaracao_disponibilidade') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/declaracao_disponibilidade", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_curriculo')){
-            foreach($request->file('anexo_curriculo') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/curriculos", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_carta_intencao')){
+        //     foreach($request->file('anexo_carta_intencao') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/carta_intencao", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_deficiencia')){
-            foreach($request->file('anexo_deficiencia') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/deficiencia", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_curriculo')){
+        //     foreach($request->file('anexo_curriculo') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/curriculos", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_escolaridade')){
-            foreach($request->file('anexo_escolaridade') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/escolaridade", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_deficiencia')){
+        //     foreach($request->file('anexo_deficiencia') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/deficiencia", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_titulacao')){
-            foreach($request->file('anexo_titulacao') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/titulacao", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_escolaridade')){
+        //     foreach($request->file('anexo_escolaridade') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/escolaridade", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_qualificacao')){
-            foreach($request->file('anexo_qualificacao') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/qualificacao", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_titulacao')){
+        //     foreach($request->file('anexo_titulacao') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/titulacao", "$fileName");
+        //     }
+        // }
 
-        if (@$request->file('anexo_experiencia_profissional')){
-            foreach($request->file('anexo_experiencia_profissional') as $key => $file)
-            {
-                $fileName = \Str::random(128) . '.'.$file->extension();
-                $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");
-            }
-        }
+        // if (@$request->file('anexo_qualificacao')){
+        //     foreach($request->file('anexo_qualificacao') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/qualificacao", "$fileName");
+        //     }
+        // }
+
+        // if (@$request->file('anexo_experiencia_profissional')){
+        //     foreach($request->file('anexo_experiencia_profissional') as $key => $file)
+        //     {
+        //         $fileName = \Str::random(128) . '.'.$file->extension();
+        //         $file->storeAs("public/inscricao/$new->id/experiencia_profissional", "$fileName");
+        //     }
+        // }
 
         Mail::to($request->email)->send(new Confirmacao($validatedData));
 
