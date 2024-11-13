@@ -51,7 +51,7 @@
 
 			<div class="navbar-brand flex-1 flex-lg-0">
 				<a href="/" class="d-inline-flex align-items-center">
-					<img src="{{ asset('images/logo_light.png') }}" class="h-32px" alt="">
+					<img src="{{ asset('images/ieptec_logo2023.png') }}" class="h-32px" alt="">
 					{{-- <img src="../../../assets/images/logo_text_light.svg" class="d-none d-sm-inline-block h-16px ms-3" alt=""> --}}
 				</a>
                 <div style="margin-left: 10px">
@@ -157,6 +157,7 @@
 							<ul class="nav-group-sub collapse">
 								<li class="nav-item"><a href="{{ route('ps.index') }}" class="nav-link">Listar</a></li>
 								<li class="nav-item"><a href="{{ route('ps.create') }}" class="nav-link">Cadastrar</a></li>
+								<li class="nav-item"><a href="{{ route('psdoc.index') }}" class="nav-link">Listar Documentos</a></li>
 								<li class="nav-item"><a href="../../../LTR/material/full/index.html" class="nav-link disabled">Cursos <span class="badge align-self-center ms-auto">Coming soon</span></a></li>
 							</ul>
 						</li>

@@ -154,7 +154,7 @@ const ExtendedFormControls = function() {
     // Autosize
     const _componentAutosize = function() {
         if (typeof autosize == 'undefined') {
-            console.warn('Warning - autosize.min.js is not loaded.');
+            //console.warn('Warning - autosize.min.js is not loaded.');
             return;
         }
 
@@ -192,7 +192,7 @@ const ExtendedFormControls = function() {
     // Passy
     const _componentPassy = function() {
         if (!$().passy) {
-            console.warn('Warning - passy.js is not loaded.');
+            //console.warn('Warning - passy.js is not loaded.');
             return;
         }
 
@@ -292,7 +292,7 @@ const ExtendedFormControls = function() {
     // Maxlength
     const _componentMaxlength = function() {
         if (!$().maxlength) {
-            console.warn('Warning - maxlength.min.js is not loaded.');
+            //console.warn('Warning - maxlength.min.js is not loaded.');
             return;
         }
 

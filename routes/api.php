@@ -25,7 +25,7 @@ Route::controller(AuthController::class)->group(function(){
 
 // Route::middleware('auth:api')->post('login2', [AuthController::class, 'login']);
 
-Route::middleware('auth:api')->Resource('processos', App\Http\Controllers\Api\ProcessoSeletivoController::class);
+Route::middleware('auth:sanctum')->Resource('/processos', App\Http\Controllers\Api\ProcessoSeletivoController::class);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

@@ -6,11 +6,21 @@
 
 @section('content')
 
+<style>
+	a {
+		color: #4CAF50;
+	}
+
+	a:hover {
+		color: #388E3C
+	}
+</style>
+
 <!-- Course overview -->
 <div class="card">
-    <div class="card-header d-lg-flex">
+    <div class="card-header text-center" >
         {{-- <h5 class="mb-0">{{ $data->titulo }}</h5> --}}
-        <h4 class="mb-0 fw-medium text-center">{{ $data->titulo }}</h4>
+        <h4 class="mb-0" style="color: #4CAF50; font-weight: 500">{{ $data->titulo }}</h4>
     </div>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="course-overview">

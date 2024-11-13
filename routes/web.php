@@ -8,7 +8,9 @@ use App\Http\Controllers\ProcessoSeletivoComunicadoController;
 use App\Http\Controllers\ProcessoSeletivoCursoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoController;
 use App\Http\Controllers\ProcessoSeletivoInscricaoNotaController;
+use App\Http\Controllers\ProcessoSeletivoNotaController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\ProcessoSeletivoDocumentosController;
 use Illuminate\Support\Facades\Route;
 use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
@@ -97,7 +99,6 @@ Route::prefix('processoseletivo')->group(function () {
         Route::delete('/{id}', [ProcessoSeletivoComunicadoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('pscom.destroy');
     });
 
-
     //CURSOS COM UM PREFIXO DE CURSOS
     Route::prefix('{id_processo_seletivo}/cursos')->group(function () {
         Route::get('/', [ProcessoSeletivoCursoController::class, 'index'])->middleware(['auth', 'verified'])->name('pc.index');
@@ -113,16 +114,23 @@ Route::prefix('processoseletivo')->group(function () {
     Route::prefix('{id_processo_seletivo}/inscricoes')->group(function () {
         Route::get('/json', [ProcessoSeletivoInscricaoController::class, 'json'])->middleware(['auth', 'verified'])->name('pi.json');
         Route::get('/', [ProcessoSeletivoInscricaoController::class, 'index'])->middleware(['auth', 'verified'])->name('pi.index');
-        Route::post('/', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
-        Route::patch('/detalhes/{id}', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
+        Route::post('/', [ProcessoSeletivoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
+        Route::patch('/detalhes/{id}', [ProcessoSeletivoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
+        // Route::post('/', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
+        // Route::patch('/detalhes/{id}', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
         Route::match(array('get', 'post'), '/search', [ProcessoSeletivoInscricaoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pi.indexSearch');
         Route::get('/{id}', [ProcessoSeletivoInscricaoController::class, 'detalhes'])->middleware(['auth', 'verified'])->name('pi.detalhes');
         Route::get('/{path}', [ProcessoSeletivoInscricaoController::class, 'downloadArquivo'])->middleware(['auth', 'verified'])->name('pi.download.arquivo');
-        // Route::get('/form', [ProcessoSeletivoInscricaoController::class, 'create'])->middleware(['auth', 'verified'])->name('pc.create');
-        // Route::get('/form/{id}', [ProcessoSeletivoInscricaoController::class, 'edit'])->middleware(['auth', 'verified'])->name('pc.edit');
-        // Route::post('/', [ProcessoSeletivoInscricaoController::class, 'store'])->middleware(['auth', 'verified'])->name('pc.store');
-        // Route::patch('/{id}', [ProcessoSeletivoInscricaoController::class, 'update'])->middleware(['auth', 'verified'])->name('pc.update');
-        // Route::delete('/{id}', [ProcessoSeletivoInscricaoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('pc.destroy');
+    });
+
+    // Auxiliar de documentos do processo seletivo
+    Route::prefix('documentos')->group(function () {
+        Route::get('/', [ProcessoSeletivoDocumentosController::class, 'index'])->middleware(['auth', 'verified'])->name('psdoc.index');
+        Route::post('/search', [ProcessoSeletivoDocumentosController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('psdoc.indexSearch');
+        Route::get('/{id}', [ProcessoSeletivoDocumentosController::class, 'edit'])->middleware(['auth', 'verified'])->name('psdoc.edit');
+        Route::post('/', [ProcessoSeletivoDocumentosController::class, 'store'])->middleware(['auth', 'verified'])->name('psdoc.store');
+        Route::patch('/{id}', [ProcessoSeletivoDocumentosController::class, 'update'])->middleware(['auth', 'verified'])->name('psdoc.update');
+        Route::delete('/{id}', [ProcessoSeletivoDocumentosController::class, 'destroy'])->middleware(['auth', 'verified'])->name('psdoc.destroy');
     });
 });
 
@@ -171,12 +179,25 @@ Route::get('/inscricao/{id?}/{id_curso?}', function ($id = null, $id_curso = nul
                     ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
                     ->whereRaw("processo_seletivos.data_abertura <= CURRENT_TIMESTAMP")
                     ->whereRaw("processo_seletivos.data_encerramento >= CURRENT_TIMESTAMP")
+                    ->orderBy('processo_seletivo_cursos.id_processo_seletivo')
+                    ->orderBy('auxiliar_municipios.nome')
+                    ->orderBy('processo_seletivo_cursos.titulo')
                     ->get(),
         'id_processo' => $id,
         'id_vaga' => $id_curso,
+        'configuracao' => DB::table('processo_seletivo_configuracaos')
+                            ->join('processo_seletivo_documentos', 'processo_seletivo_configuracaos.id_processo_seletivo_doc', 'processo_seletivo_documentos.id')
+                            ->where('processo_seletivo_configuracaos.id_processo_seletivo', $id)
+                            ->get(),
         'tipo_documentos' => AuxiliarTipoDocumento::orderBy("nome")->get(),
     ]);
 })->name('inscricao');
+
+// Redirecionamento ao selecionar a vaga
+Route::get('/redirecionamento/inscricao/{id}', function ($id_curso) {
+    $curso = ProcessoSeletivoCurso::findOrFail($id_curso);
+    return redirect()->route('inscricao', ['id' => $curso->id_processo_seletivo, 'id_curso' => $id_curso]);
+});
 
 Route::get('/inscricao/{id?}/{id_curso?}/teste', function ($id = null, $id_curso = null) {
     return DB::table('processo_seletivo_cursos')
@@ -229,23 +250,38 @@ Route::get('/dashboard', function () {
 //     return redirect()->route("usuarios.index");
 // })->middleware('admin');
 
-Route::get('/emailteste/{email}', function($email) {
+// Route::get('/emailteste/{email}', function($email) {
+//     $teste = [
+//         "nome" => "Tiago Marcos de Souza Pereira",
+//         "id_processo_seletivo" => 1,
+//         "id_processo_seletivo_curso" => 2,
+//         "id_tipo_documento" => 1,
+//         "numero_documento" => "132132132",
+//         "numero_contato" => "32132132132",
+//         "email" => "teste@teste.com"
+//     ];
+
+//     Mail::to($email)->send(new Confirmacao($teste));
+// });
+
+Route::get('/emailteste', function() {
     $teste = [
-        "nome" => "Teste",
-        "id_processo_seletivo" => 7,
-        "id_processo_seletivo_curso" => 411,
-        "id_tipo_documento" => 2,
+        "nome" => "Bruno Oliveira Selhorst",
+        "id_processo_seletivo" => 1,
+        "id_processo_seletivo_curso" => 2,
+        "id_tipo_documento" => 1,
         "numero_documento" => "132132132",
         "numero_contato" => "32132132132",
         "email" => "teste@teste.com"
     ];
-
-    Mail::to($email)->send(new Confirmacao($teste));
+    return view('mail.confirmacao' , [
+        'data' => $teste
+    ]);
 });
 
-// Route::get('/emailteste', function() {
-//     return view('mail.confirmacao');
-// });
+Route::get('/teste/paginaprincipal', function () {
+    return view('teste.paginaprincipal');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -1,7 +1,7 @@
 @extends('layouts.layout-guest')
-@section('header')
+{{-- @section('header')
     Formulário - <span class="fw-normal">Inscrição</span>
-@stop
+@stop --}}
 
 @section('content')
 
@@ -13,16 +13,27 @@
     @endif
     
     <div class="card">
-        <form class="form-validate-jquery" method='POST' action="{{ route('inscricao.store') }}" enctype='multipart/form-data'
+        <div class="card-header text-center" style="background-color: #4CAF50; color: white; font-size: 28px; font-weight: 500">
+            Formulário de Inscrição
+        </div>
+        <form class="form-validate-jquery" method='POST' id="formulario-inscricao" action="{{ route('inscricao.store') }}" enctype='multipart/form-data'
             novalidate>
             @csrf
 
+            <style>
+                .titulo {
+                    color: #4CAF50;
+                    font-size: 20px;
+                }
+            </style>
+
             <div class="card-body">
-                <div class="fw-bold border-bottom pb-2 mb-3">Dados do Processo Seletivo</div>
+                <div class="fw-bold border-bottom pb-2 mb-3 titulo">Dados do Processo Seletivo</div>
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Vaga<span class="text-danger">*</span></label>
                     <div class="col-lg-9">
-                        <select name="id_processo_seletivo_curso" onchange="esconderCampos(this.value)" class="form-select" required="">
+                        {{-- <select name="id_processo_seletivo_curso" onchange="esconderCampos(this.value)" class="form-select" required=""> --}}
+                        <select name="id_processo_seletivo_curso" onchange="mudarVaga(this.value)" class="form-select" required="">
                             <option value="">Escolha uma vaga abaixo</option>
                             {{ $old = '' }}
                             @foreach ($vagas as $vaga)
@@ -41,7 +52,7 @@
                     </div>
                 </div>
 
-                <div class="fw-bold border-bottom pb-2 mb-3">Dados de Inscrição</div>
+                <div class="fw-bold border-bottom pb-2 mb-3 titulo">Dados de Inscrição</div>
                 <p class="mb-4">NOTA: Por favor, leia com atenção os campos e preencha corretamente as informações abaixo.
                 </p>
                 <div class="row mb-3">
@@ -131,19 +142,39 @@
 
                 <div class="card area_deficiencia d-none">
                     <div class="card-header">
-                        <h5 class="mb-0">Documento comprovatório da deficiência <code>(PDF)</code>
+                        <h5 class="mb-0">Documento comprobatório da deficiência <code>(PDF)</code>
                         </h5>
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
                         <input type="file" name="anexo_deficiencia[]" class="file-input" multiple="multiple"
-                            accept=".pdf" id="anexo_deficiencia">
+                            accept=".pdf" id="anexo_deficiencia" >
                     </div>
                 </div>
 
-                <div class="fw-bold border-bottom pb-2 mb-3">Documentos Comprobatórios</div>
+                <div class="fw-bold border-bottom pb-2 mb-3 titulo">Documentos Comprobatórios</div>
+                {{-- {{ $configuracao }} --}}
+                {{-- {{$configuracao}} --}}
+                @foreach ($configuracao as $conf)
+                    @php
+                        $name = \App\Helpers\StringHelper::removerAcentos(preg_replace("/\s+/", "_",strtolower($conf->nome)))
+                    @endphp
+                    {{-- {{$conf->obrigatorio}} --}}
+                    <x-upload-file 
+                        header_description="{{$conf->descricao}}"
+                        name="{{$name}}" 
+                        multiple="{{$conf->multiplos_arquivos}}"
+                        required="{{$conf->obrigatorio}}"
+                    />
+                @endforeach
+                {{-- <x-upload-file 
+                    header_description="Descrição do documento a ser adicionado" 
+                    name="Nome" 
+                    multiple=true
+                    required=true
+                /> --}}
 
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">Documento com foto (RG, CNH, Carteira de Identidade Profissional) <code>(PDF)</code></h5>
                     </div>
@@ -153,7 +184,7 @@
                         <input type="file" name="anexo_documento[]" class="file-input-required"
                             accept=".pdf" multiple>
                     </div>
-                </div>
+                </div> --}}
 
                 {{-- @if (@$id_processo == 15)
 
@@ -233,7 +264,7 @@
 
                 @endif --}}
                 
-                @if (@$id_processo == 17)
+                {{-- @if (@$id_processo == 17)
                     <div class="card div-declaracao">
                         <div class="card-header">
                             <h5 class="mb-0">Declaração de disponibilidade <code>(PDF)</code></h5>
@@ -304,7 +335,7 @@
                     </div>
                     <div class="card-body">
                         <p class="fw-semibold">Pré visualização</p>
-                        <input type="file" name="anexo_experiencia_profissional[]" class="file-input-required"
+                        <input type="file" name="anexo_experiencia_profissional[]" class="file-input"
                             multiple="multiple" accept=".pdf">
                     </div>
                 </div>
@@ -320,7 +351,7 @@
                                 multiple="multiple" accept=".pdf">
                         </div>
                     </div>
-                @endif
+                @endif --}}
 
                 {{-- <x-upload-file 
                     header_description="Descrição do documento a ser adicionado" 
@@ -330,15 +361,42 @@
                 /> --}}
 
                 <div class="card-footer text-end">
-                    <button type="submit" class="btn btn-primary">Fazer Inscrição </button>
+                    <button type="submit" class="btn btn-primary" id="submit-button" style="background-color: #4CAF50; border-color: #4CAF50">Fazer Inscrição </button>
                 </div>
             </div>
         </form>
     </div>
 @stop
 
-@push('scripts')
+@push('scripts')   
     <script>
+        document.getElementById('formulario-inscricao').addEventListener('submit', function(event) {            
+            // Desabilita o botão de envio
+            const submitBtn = document.getElementById('submit-button');
+            submitBtn.disabled = true;
+
+            const fileInputs = document.querySelectorAll('.file-input-required');
+            let isValid = true;
+
+            fileInputs.forEach(function(input) {
+                if(!input.hasAttribute('aria-invalid', 'false')){
+                    isValid = false;
+                    // alert("teste");
+                    return;
+                }
+            })
+
+            // Se algum campo não for válido, impede o envio
+            if (!isValid) {
+                alert("Está faltando algum documento obrigatório!");
+                event.preventDefault();
+                // Desabilita o botão de envio
+                    const submitBtn = document.getElementById('submit-button');
+                    submitBtn.disabled = false;
+                return; // não envia o formulário
+            }        
+});
+
         document.addEventListener('DOMContentLoaded', function() {
 
             let inputs = document.querySelectorAll('input[name="deficiencia"]');
@@ -357,16 +415,18 @@
                         deficienciaId.classList.remove('file-input-required');
                     }
                 });
-            });
-
-            
+            });           
 
         });
 
+        function mudarVaga(id_curso) {
+            window.location.href = "/redirecionamento/inscricao/"+id_curso;
+        }
+
         function esconderCampos(id_curso){
-            let anexoComprovante = document.getElementById('anexo_comprovante_endereco');
+            // let anexoComprovante = document.getElementById('anexo_comprovante_endereco');
             let anexoDeclaracao = document.getElementById('anexo_declaracao_disponibilidade');
-            let anexoCarta = document.getElementById('anexo_carta_intencao');
+            // let anexoCarta = document.getElementById('anexo_carta_intencao');
 
             if (id_curso == 17){
                 // document.querySelector('.div-comprovante').classList.remove('d-none');
@@ -401,3 +461,9 @@
         // });
     </script>
 @endpush
+
+@php
+    // function tirarAcentos($string){
+    //     return preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/(ç)/", "/(Ç)/"),explode(" ","a A e E i I o O u U n N c C"),$string);
+    // }
+@endphp

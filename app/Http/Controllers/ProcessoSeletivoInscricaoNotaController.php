@@ -37,16 +37,15 @@ class ProcessoSeletivoInscricaoNotaController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         $id_processo_seletivo = $request->id_processo_seletivo;
         $validatedData = $request->validate([
             'id_inscricao' => 'required',
             'status' => 'required',            
             'nota_comprovante_endereco' => '',
             'nota_carta_intencao' => '',
-            'nota_titulacao' => 'required',
-            'nota_qualificacao' => 'required',
-            'nota_exp_profissional' => 'required',
+            // 'nota_titulacao' => 'required',
+            // 'nota_qualificacao' => 'required',
+            // 'nota_exp_profissional' => 'required',
             'mensagem' => '',
             'analisado_por' => '',
         ]);
@@ -91,9 +90,9 @@ class ProcessoSeletivoInscricaoNotaController extends Controller
             'status' => 'required',
             'nota_comprovante_endereco' => '',
             'nota_carta_intencao' => '',            
-            'nota_titulacao' => 'required',
-            'nota_qualificacao' => 'required',
-            'nota_exp_profissional' => 'required',
+            // 'nota_titulacao' => 'required',
+            // 'nota_qualificacao' => 'required',
+            // 'nota_exp_profissional' => 'required',
             'mensagem' => '',
         ]);
         $validatedData['analisado_por'] = Auth::user()->name;

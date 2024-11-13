@@ -50,6 +50,36 @@ use Illuminate\Support\Facades\URL;
                     <div class="valid-feedback">Campo válido</div>
                 </div>
             </div>
+            <div class="row mb-3">
+                <label class="col-form-label col-lg-2 offset-lg-1">Documentos do Processo Seletivo<span class="text-danger">*</span></label>
+                <div class="col-lg-9">
+                    <div class="table-responsive border rounded col-lg-9">
+                        <table class="table">
+                            <tr>
+                                <th>Ativo</th>
+                                <th>Documento</th>
+                                <th>É obrigatório</th>
+                                <th>Possui Pontuação</th>
+                                <th>Pode enviar vários arquivos</th>
+                            </tr>
+                            @foreach ($documentos as $item)
+                                <tr>
+                                    {{-- <td class='text-center'><input type="checkbox" name="documentos[{{ tirarAcentos(preg_replace("/\s+/", "_",strtolower($item->nome))) }}][ativo]" class="form-check-input"></td> --}}
+                                    <td class='text-center'><input type="checkbox" name="documentos[{{ $item->id }}][ativo]" class="form-check-input" {{ @$configuracao[$item->id] ? 'checked' : '' }}></td>
+                                    {{-- <td>{{ preg_replace("/\s+/", "_",strtolower($item->nome)) }}</td> --}}
+                                    <td>{{$item->nome}}</td>
+                                    <td class='text-center'><input type="checkbox" name="documentos[{{ $item->id }}][required]" class="form-check-input" {{ @$configuracao[$item->id]->obrigatorio ? 'checked' : '' }}></td>
+                                    <td class='text-center'><input type="checkbox" name="documentos[{{ $item->id }}][score]" class="form-check-input" {{ @$configuracao[$item->id]->pontuacao ? 'checked' : '' }}></td>
+                                    <td class='text-center'><input type="checkbox" name="documentos[{{ $item->id }}][multiple]" class="form-check-input" {{ @$configuracao[$item->id]->multiplos_arquivos ? 'checked' : '' }}></td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                    {{-- @foreach ($documentos as $item)
+                        <input type="checkbox" name="vehicle1" id="vehicle1" class=""> <label for="vehicle1">{{$item->nome}}</label>
+                    @endforeach --}}
+                </div>
+            </div>
             
             <div class="row mb-3">
                 <label class="col-form-label col-lg-2 offset-lg-1">Edital <code>(PDF)</code> <span class="text-danger">*</span></label>

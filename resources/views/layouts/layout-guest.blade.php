@@ -44,12 +44,25 @@
 
 <body>
 
+	<style>
+		.navbar-nav-link, .dropdown-item {
+			color: #4CAF50;
+			font-weight: bold;
+			background: 
+		}
+		.navbar-nav-link:hover, .dropdown-item:hover, .navbar-nav-link:focus {
+			color: white;
+			background: #4CAF50;
+		}
+
+	</style>
+
 	<!-- Main navbar -->
 	<div class="navbar navbar-expand-xl navbar-static shadow">
 		<div class="container-fluid">
 			<div class="navbar-brand flex-1">
 				<a href="/" class="d-inline-flex align-items-center">
-					<img src="{{ asset('images/logo_dark.png') }}" class="h-48px" alt="">
+					<img src="{{ asset('images/ieptec_logo2023.png') }}" class="h-48px" alt="">
 					{{-- <img src="../../../assets/images/logo_icon.svg" alt="">
 					<img src="../../../assets/images/logo_text_dark.svg" class="d-none d-sm-inline-block h-16px invert-dark ms-3" alt=""> --}}
 				</a>
@@ -58,7 +71,7 @@
 			<div class="d-flex w-100 w-xl-auto overflow-auto overflow-xl-visible scrollbar-hidden border-top border-top-xl-0 order-1 order-xl-0 pt-2 pt-xl-0 mt-2 mt-xl-0">
 				<ul class="nav gap-1 justify-content-center flex-nowrap flex-xl-wrap mx-auto">
 					<li class="nav-item">
-						<a href="/" class="navbar-nav-link rounded">
+						<a href="/" class="navbar-nav-link rounded text-green">
 						{{-- <a href="index.html" class="navbar-nav-link rounded active"> --}}
 							<i class="ph-house me-2"></i>
 							Home

@@ -17,7 +17,9 @@ class ProcessoSeletivoController extends Controller
     {
         // Primeiro
         $data = ProcessoSeletivo::all();
-        return response()->json($data);
+        return response()->json([
+            'data' => $data
+        ], 200);
         // Segundo
         // return ProcessoSeletivo::all();
     }

@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProcessoSeletivo;
+use App\Models\ProcessoSeletivoAnalise;
+use App\Models\ProcessoSeletivoConfiguracao;
 use App\Models\ProcessoSeletivoCurso;
 use App\Models\ProcessoSeletivoInscricao;
 use App\Models\ProcessoSeletivoInscricaoNota;
+use App\Models\ProcessoSeletivoNota;
 
 use Illuminate\Support\Facades\DB;
 
@@ -38,10 +41,10 @@ class ProcessoSeletivoInscricaoController extends Controller
                     ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
                     ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
                     ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
-                    ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
-                    ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
+                    ->leftjoin('processo_seletivo_analises', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
+                    ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_analises.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
                     ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
-                    ->orderBy('processo_seletivo_inscricao_notas.status')
+                    ->orderBy('processo_seletivo_analises.status')
                     ->orderBy('processo_seletivo_inscricaos.nome')
                     ->paginate(15);
         // $data = ProcessoSeletivoInscricao::orderBy('nome')->paginate(15);
@@ -87,6 +90,13 @@ class ProcessoSeletivoInscricaoController extends Controller
      */
     public function store(Request $request)
     {
+        // Desestruturação, pegando somente o id
+        ["id_processo_seletivo" => $id_processo_seletivo] = ProcessoSeletivoCurso::findOrFail($request->id_processo_seletivo_curso);
+
+        // Pegando as configurações do processo seletivo
+        $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $id_processo_seletivo)->get();
+
+        // return $configuracoes;
         $validatedData = $request->validate([
             'id_processo_seletivo_curso' => 'required',
             'id_tipo_documento' => 'required',
@@ -97,31 +107,33 @@ class ProcessoSeletivoInscricaoController extends Controller
             'numero_contato' => 'required',
             'email' => 'required',
             'data_nascimento' => 'required',
-            'anexo_documento' => 'required',
-            'anexo_comprovante_endereco' => '',
-            'anexo_declaracao_disponibilidade' => '',
-            'anexo_carta_intencao' => '',
-            'anexo_curriculo' => '',
-            'anexo_titulacao' => 'required',
-            'anexo_qualificacao' => 'required',
-            'anexo_escolaridade' => '',
-            'anexo_experiencia_profissional' => '',
             'anexo_deficiencia' => '',
-            'deficiencia' => 'required',
+            'deficiencia' => '',
         ]);
 
         $new = ProcessoSeletivoInscricao::create($validatedData);
         
-        $this->documentService->saveDocumentEnrolled($new->id, "documentos", @$request->file('anexo_documento'));
-        $this->documentService->saveDocumentEnrolled($new->id, "comprovante_endereco", @$request->file('anexo_comprovante_endereco'));
-        $this->documentService->saveDocumentEnrolled($new->id, "declaracao_disponibilidade", @$request->file('anexo_declaracao_disponibilidade'));
-        $this->documentService->saveDocumentEnrolled($new->id, "carta_intencao", @$request->file('anexo_carta_intencao'));
-        $this->documentService->saveDocumentEnrolled($new->id, "curriculo", @$request->file('anexo_curriculo'));
+        // Documento de deficiência é um caso a parte
         $this->documentService->saveDocumentEnrolled($new->id, "deficiencia", @$request->file('anexo_deficiencia'));
-        $this->documentService->saveDocumentEnrolled($new->id, "escolaridade", @$request->file('anexo_escolaridade'));
-        $this->documentService->saveDocumentEnrolled($new->id, "titulacao", @$request->file('anexo_titulacao'));
-        $this->documentService->saveDocumentEnrolled($new->id, "qualificacao", @$request->file('anexo_qualificacao'));
-        $this->documentService->saveDocumentEnrolled($new->id, "experiencia_profissional", @$request->file('anexo_experiencia_profissional'));
+        
+        // Adicionar os documentos que foram enviados
+        foreach ($configuracoes as $conf){
+            
+            $path_name = \App\Helpers\StringHelper::removerAcentos(preg_replace("/\s+/", "_",strtolower($conf->documento->nome)));
+            echo $path_name;
+            $this->documentService->saveDocumentEnrolled($new->id, $path_name, @$request->file($path_name));
+        }
+
+        // $this->documentService->saveDocumentEnrolled($new->id, "documentos", @$request->file('anexo_documento'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "comprovante_endereco", @$request->file('anexo_comprovante_endereco'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "declaracao_disponibilidade", @$request->file('anexo_declaracao_disponibilidade'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "carta_intencao", @$request->file('anexo_carta_intencao'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "curriculo", @$request->file('anexo_curriculo'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "deficiencia", @$request->file('anexo_deficiencia'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "escolaridade", @$request->file('anexo_escolaridade'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "titulacao", @$request->file('anexo_titulacao'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "qualificacao", @$request->file('anexo_qualificacao'));
+        // $this->documentService->saveDocumentEnrolled($new->id, "experiencia_profissional", @$request->file('anexo_experiencia_profissional'));
 
         // if (@$request->file('anexo_documento')){
         //     foreach($request->file('anexo_documento') as $key => $file)
@@ -263,12 +275,13 @@ class ProcessoSeletivoInscricaoController extends Controller
                 ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
                 ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
                 ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
-                ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
-                ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
+                // ->leftjoin('processo_seletivo_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_notas.id_inscricao')
+                ->leftjoin('processo_seletivo_analises', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
+                ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_analises.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
                 ->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%")
                 ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' )
                 ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
-                ->orderBy('processo_seletivo_inscricao_notas.status')
+                ->orderBy('processo_seletivo_analises.status')
                 ->orderBy('processo_seletivo_inscricaos.nome')
                 ->paginate(15);       
 	// $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
@@ -282,11 +295,17 @@ class ProcessoSeletivoInscricaoController extends Controller
 
     public function detalhes($id_processo_seletivo, $id){
         $data = ProcessoSeletivoInscricao::findOrFail($id);
-        $data_nota = ProcessoSeletivoInscricaoNota::where('id_inscricao', $id)->first();
+        $configuracoes = ProcessoSeletivoConfiguracao::with('documento')->where('id_processo_seletivo', $id_processo_seletivo)->get();
+        $data_analise = ProcessoSeletivoAnalise::where('id_inscricao', $id)->orderBy('id', 'desc')->first();
+        if($data_analise){
+            $data_nota = ProcessoSeletivoNota::where('id_processo_seletivo_analise', @$data_analise->id)->get()->keyBy('id_processo_seletivo_doc');
+        }
         return view('processoSeletivo.inscricoes.detalhes', [
             'id_processo_seletivo' => $id_processo_seletivo,
+            'configuracoes' => $configuracoes,
             'data' => $data,
-            'data_nota' => $data_nota,
+            'data_analise' => @$data_analise,
+            'data_nota' => @$data_nota,
         ]);
     }
 
