@@ -22,7 +22,7 @@
             @csrf
             <div class="d-flex justify-content-center border rounded p-2">
                 <div class="col-lg-5 py-2 px-3 rounded">
-                    <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisa por nome ou município">
+                    <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisa por nome, município ou quem fez a análise">
                 </div>
                 <div class="col-lg-1 py-2 px-3 rounded">
                     <button type="submit" class="btn btn-outline-light">Pesquisar</button>
@@ -42,11 +42,13 @@
                     <th>Município</th>
                     <th>Nome</th>
                     <th>Status</th>
+                    <th>Analisado Por</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $item)
+
                     <tr>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->tipo_documento.": ".$item->numero_documento }}</td>
@@ -64,6 +66,7 @@
                                 <span class="badge bg-success bg-opacity-10 text-warning">A ser analisado</span>
                             @endif
                         </td>
+                        <td >{{ ($item->analisado_por) ? $item->analisado_por : '-' }}</td>
                         <td class="text-center">
                             <div class="d-inline-flex">
                                 <div class="dropdown">
@@ -84,7 +87,6 @@
             </tbody>
         </table>
         <hr>
-        {{ Request()->pesquisa }}
         @include('components.pagination', ['data' => $data, 'search' => Request()->pesquisa])
         {{-- <div class="d-flex align-items-center" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
             <span class="text-muted me-auto">Mostrando {{ $data->firstItem() }} até {{ $data->lastItem() }} de {{ $data->total() }} registros</span>

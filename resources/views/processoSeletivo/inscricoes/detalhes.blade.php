@@ -45,11 +45,18 @@
                                 <h6>{{$conf->documento->nome}}</h6>
                                 
                                 @if (@$documentos) 
+                                    @php
+                                        $contador = 1;
+                                    @endphp
                                     @foreach ($documentos as $documento)
-                                    <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
+                                    <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column" onclick="alterarCorLink(this, event)">
                                         <i class="ph-file-pdf ph-2x mb-1"></i>
                                         Ver Arquivo
+                                        {{$contador}}
                                     </a>
+                                    @php
+                                        $contador++;
+                                    @endphp
                                     @endforeach
                                 @else
                                     Não Possui
@@ -69,201 +76,6 @@
                         @endforeach
                     @endif                   
 
-                    <?php
-                        // $anexo_carta_intencao = Storage::files("public/inscricao/$data->id/carta_intencao");
-                        // $anexo_comprovante_endereco = Storage::files("public/inscricao/$data->id/comprovante_endereco");
-                        // $anexo_curriculo = Storage::files("public/inscricao/$data->id/curriculos");
-                        // $anexo_declaracao_disponibilidade = Storage::files("public/inscricao/$data->id/declaracao_disponibilidade");
-                        // $anexo_documentos = Storage::files("public/inscricao/$data->id/documentos");
-                        // $anexo_titulacao = Storage::files("public/inscricao/$data->id/titulacao");
-                        // $anexo_qualificacao = Storage::files("public/inscricao/$data->id/qualificacao");
-                        // $anexo_experiencia_profissional = Storage::files("public/inscricao/$data->id/experiencia_profissional");
-                    ?>
-                            
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Documentos</h6>
-                        @if (@$anexo_documentos) 
-                            @foreach ($anexo_documentos as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_comprovante_endereco" class="form-control" value="{{ @$data_nota? $data_nota->nota_comprovante_endereco : 0 }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-1 mb-4">
-                        <h6>Currículo</h6>
-                        @if (@$anexo_curriculo) 
-                            @foreach ($anexo_curriculo as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                    </div> --}}
-                                        
-                    {{-- @if (@$anexo_comprovante_endereco) 
-                        <div class="mt-1 mb-4">
-                            <h6>Comprovante de Endereço</h6>
-                            @foreach ($anexo_comprovante_endereco as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    @if (@$anexo_declaracao_disponibilidade) 
-                        <div class="mt-1 mb-4">
-                            <h6>Declaração de Disponibilidade</h6>
-                            @foreach ($anexo_declaracao_disponibilidade as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        </div>
-                    @endif --}}
-
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Declaração de Disponibilidade</h6>
-                        @if (@$anexo_declaracao_disponibilidade)
-                            @foreach ($anexo_declaracao_disponibilidade as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_declaracao_disponibilidade" class="form-control" value="{{ @$data_nota? $data_nota->nota_declaracao_disponibilidade : 0 }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div> --}}
-
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Comprovante de Endereço</h6>
-                        @if (@$anexo_comprovante_endereco)
-                            @foreach ($anexo_comprovante_endereco as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_comprovante_endereco" class="form-control" value="{{ @$data_nota? $data_nota->nota_comprovante_endereco : 0 }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div> --}}
-
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Carta de Intenção</h6>
-                        @if (@$anexo_carta_intencao)
-                            @foreach ($anexo_carta_intencao as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_carta_intencao" class="form-control" value="{{ @$data_nota? $data_nota->nota_carta_intencao : 0 }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div> --}}
-
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Titulação</h6>
-                        @if (@$anexo_titulacao)
-                            @foreach ($anexo_titulacao as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Arquivo
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_titulacao" class="form-control" value="{{ @$data_nota? $data_nota->nota_titulacao : 0 }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div> --}}
-			
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Qualificação</h6>
-                        @if (@$anexo_qualificacao)
-                            @foreach ($anexo_qualificacao as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Documento
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_qualificacao" class="form-control" value="{{ (@$data_nota)? $data_nota->nota_qualificacao : '0' }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div>       --}}
-                    {{-- <div class="mt-1 mb-4">
-                        <h6>Experiencia Profissional</h6>
-                        @if (@$anexo_experiencia_profissional) 
-                            @foreach ($anexo_experiencia_profissional as $documento)
-                            <a href="{{ Storage::url($documento) }}" target="_blank" class="btn btn-outline-danger flex-column">
-                                <i class="ph-file-pdf ph-2x mb-1"></i>
-                                Ver Documento
-                            </a>
-                            @endforeach
-                        @else
-                            Não Possui
-                        @endif
-                        <div class="col-lg-1" style="padding-top: 10px">
-                            <div class="mb-4">
-                                <label class="form-label">Pontuação</label>
-                                <input type="number" min=0 name="nota_exp_profissional" class="form-control" value="{{ (@$data_nota)? $data_nota->nota_exp_profissional : '0' }}">
-                                <span class="form-text"></span>
-                            </div>
-                        </div>
-                    </div> --}}
-
                     <div class="mt-1 mb-4">
                         <h6>Mensagem (Caso tenha indeferimento)</h6>
                         <div class="col-lg-8" style="padding-top: 10px">
@@ -282,5 +94,34 @@
         </div>
     </form>
 </div>
+<script>
+    function alterarCorLink(elemento, evento) {
+        // Altera a cor do link para verde (ou qualquer outra cor)
+        elemento.classList.remove('btn-outline-danger');
+        elemento.classList.add('btn-outline-success');
+        
+        // Adiciona a classe 'clicado' para manter o estilo
+        elemento.classList.add('clicado');
+        
+        // Previne a navegação normal do link (abrir o arquivo)
+        evento.preventDefault();
+        
+        // Agora abre o arquivo depois de um pequeno delay (para garantir que a cor tenha mudado)
+        setTimeout(function() {
+            window.open(elemento.href, '_blank');  // Isso simula o comportamento do link (abre o arquivo)
+        }, 100);
+    }
+</script>
 
+<style>
+    /* Estilos para links clicados */
+    .documento-btn.clicado {
+        background-color: #28a745 !important; /* Cor de fundo verde */
+        color: white; /* Cor do texto */
+    }
+</style>
 @stop
+
+@push('scripts')
+    
+@endpush

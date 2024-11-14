@@ -49,7 +49,7 @@
 					<div class="card blog-horizontal">
 						<div class="card-body bg-opacity-10 {{ (date(strtotime($item->data_encerramento)) >= time())? ((date(strtotime($item->data_abertura)) <= time())? '' : 'bg-success' ) : 'bg-danger' }}">
 							<div class="mb-3">
-								<h5 class="d-flex flex-nowrap my-1" style="text-align: justify">
+								<h5 class="d-flex flex-nowrap my-1" style="text-align: justify; padding-top: 10px">
 									<a href="{{ route('edital', $item->id) }}" class="me-2">{{ $item->titulo }}</a> 									
 								</h5>
 								{{-- @if (Storage::get("public/editais/$item->id/resultado.pdf"))
