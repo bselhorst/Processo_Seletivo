@@ -53,8 +53,8 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->titulo }}</td>
-                        <td>{{ $item->descricao }}</td>
+                        <td style="text-align: justify">{{ $item->titulo }}</td>
+                        <td style="text-align: justify">{{ $item->descricao }}</td>
                         <td>{{ date('d/m/Y H:i:s', strtotime($item->data_abertura)) }}</td>
                         <td>{{ date('d/m/Y H:i:s', strtotime($item->data_encerramento)) }}</td>
                         <td>
