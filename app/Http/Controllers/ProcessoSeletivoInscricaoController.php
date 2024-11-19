@@ -396,10 +396,7 @@ class ProcessoSeletivoInscricaoController extends Controller
                 $query->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%") // Primeira condição OR
                     ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' ) // Segunda condição OR
                     ->orWhere('processo_seletivo_analises.analisado_por', 'LIKE', '%'.$request->pesquisa.'%' );
-            })
-            // ->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%")
-            // ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' )
-            // ->orWhere('processo_seletivo_analises.analisado_por', 'LIKE', '%'.$request->pesquisa.'%' )            
+            })         
             ->orderBy('processo_seletivo_analises.status')
             ->orderBy('processo_seletivo_inscricaos.nome')
             ->distinct()  // Isso vai garantir que as inscrições sejam distintas, sem repetições.
