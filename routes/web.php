@@ -69,6 +69,7 @@ Route::prefix('usuarios')->middleware('admin')->group(function () {
 Route::prefix('processoseletivo')->group(function () {
     //PARTE GERAL DO PROCESSO SELETIVO
     Route::get('/', [ProcessoSeletivoController::class, 'index'])->middleware(['auth', 'verified'])->name('ps.index');
+    Route::get('/{id}/downloadAllDocuments', [ProcessoSeletivoController::class, 'downloadAllDocuments'])->middleware(['auth', 'verified'])->name('ps.downloadAllDocuments');
     Route::post('/search', [ProcessoSeletivoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('ps.indexSearch');
     Route::get('/form', [ProcessoSeletivoController::class, 'create'])->middleware(['auth', 'verified'])->name('ps.create');
     Route::get('/form/{id}', [ProcessoSeletivoController::class, 'edit'])->middleware(['auth', 'verified'])->name('ps.edit');
@@ -116,6 +117,10 @@ Route::prefix('processoseletivo')->group(function () {
         Route::get('/', [ProcessoSeletivoInscricaoController::class, 'index'])->middleware(['auth', 'verified'])->name('pi.index');
         Route::post('/', [ProcessoSeletivoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
         Route::patch('/detalhes/{id}', [ProcessoSeletivoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
+        // ROTA ANTIGA
+        Route::post('/antigo', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store.antigo');
+        Route::patch('/detalhes/{id}/antigo', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update.antigo');
+        // FIM ROTA ANTIGA
         // Route::post('/', [ProcessoSeletivoInscricaoNotaController::class, 'store'])->middleware(['auth', 'verified'])->name('pn.store');
         // Route::patch('/detalhes/{id}', [ProcessoSeletivoInscricaoNotaController::class, 'update'])->middleware(['auth', 'verified'])->name('pn.update');
         Route::match(array('get', 'post'), '/search', [ProcessoSeletivoInscricaoController::class, 'indexSearch'])->middleware(['auth', 'verified'])->name('pi.indexSearch');
@@ -199,16 +204,24 @@ Route::get('/redirecionamento/inscricao/{id}', function ($id_curso) {
     return redirect()->route('inscricao', ['id' => $curso->id_processo_seletivo, 'id_curso' => $id_curso]);
 });
 
-Route::get('/inscricao/{id?}/{id_curso?}/teste', function ($id = null, $id_curso = null) {
-    return DB::table('processo_seletivo_cursos')
-                    ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
-                    ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
-                    ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
-                    ->whereRaw("processo_seletivos.data_abertura <= CURRENT_TIMESTAMP")
-                    ->whereRaw("processo_seletivos.data_encerramento >= CURRENT_TIMESTAMP")
-                    ->get();
+Route::get('/inscricao/{id}/{id_curso}/teste', function ($id = null, $id_curso) {
+    $teste = DB::table('processo_seletivo_configuracaos')
+                            ->join('processo_seletivo_documentos', 'processo_seletivo_configuracaos.id_processo_seletivo_doc', 'processo_seletivo_documentos.id')
+                            ->where('processo_seletivo_configuracaos.id_processo_seletivo', $id)
+                            ->get();
+    return $teste;
+});
+
+// Route::get('/inscricao/{id?}/{id_curso?}/teste', function ($id = null, $id_curso = null) {
+//     return DB::table('processo_seletivo_cursos')
+//                     ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
+//                     ->join('processo_seletivos', 'processo_seletivo_cursos.id_processo_seletivo', 'processo_seletivos.id')
+//                     ->select('processo_seletivo_cursos.id as id', 'auxiliar_municipios.nome as municipio', 'processo_seletivo_cursos.titulo as titulo', 'processo_seletivos.titulo as processo_seletivo')
+//                     ->whereRaw("processo_seletivos.data_abertura <= CURRENT_TIMESTAMP")
+//                     ->whereRaw("processo_seletivos.data_encerramento >= CURRENT_TIMESTAMP")
+//                     ->get();
                     
-})->name('inscricao-teste');
+// })->name('inscricao-teste');
 
 Route::post('/inscricao', [ProcessoSeletivoInscricaoController::class, 'store'])->name('inscricao.store');
 

@@ -35,58 +35,63 @@ class ProcessoSeletivoInscricaoController extends Controller
      
     public function index($id_processo_seletivo)
     {
-        $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
-        // $data = DB::table('processo_seletivo_inscricaos')
-        //             ->distinct('processo_seletivo_inscricaos.id')
-        //             ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
-        //             ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
-        //             ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
-        //             ->leftjoin('processo_seletivo_analises', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
-        //             ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_analises.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade', 'processo_seletivo_analises.analisado_por as analisado_por')
-        //             ->whereIn('processo_seletivo_analises.id', function($query){
-        //                 $query->select(DB::raw('MAX(processo_seletivo_analises.id)'))
-        //                 ->from('processo_seletivo_analises')
-        //                 ->groupBy('processo_seletivo_analises.id_inscricao');
-        //             })
-        //             ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
-        //             ->orderBy('processo_seletivo_analises.status')
-        //             ->orderBy('processo_seletivo_inscricaos.nome')
-        //             ->paginate(15);
-        // $data = ProcessoSeletivoInscricao::orderBy('nome')->paginate(15);
-        // return $data;
-        $data = DB::table('processo_seletivo_inscricaos')
-            ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', '=', 'processo_seletivo_cursos.id')
-            ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', '=', 'auxiliar_tipo_documentos.id')
-            ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', '=', 'auxiliar_municipios.id')
-            ->leftJoin(
-                DB::raw('(SELECT MAX(id) AS id, id_inscricao
-                        FROM processo_seletivo_analises
-                        GROUP BY id_inscricao) AS max_analises'),
-                'processo_seletivo_inscricaos.id',
-                '=',
-                'max_analises.id_inscricao'
-            )
-            ->leftJoin('processo_seletivo_analises', 'processo_seletivo_analises.id', '=', 'max_analises.id')
-            ->select(
-                'processo_seletivo_inscricaos.id as id', 
-                'auxiliar_tipo_documentos.nome as tipo_documento', 
-                'processo_seletivo_inscricaos.numero_documento', 
-                'processo_seletivo_inscricaos.nome', 
-                'processo_seletivo_analises.status as status', 
-                'titulo as curso', 
-                'auxiliar_municipios.nome as cidade', 
-                'processo_seletivo_analises.analisado_por as analisado_por'
-            )
-            ->where('processo_seletivo_cursos.id_processo_seletivo', '=', $id_processo_seletivo)
-            ->orderBy('processo_seletivo_analises.status')
-            ->orderBy('processo_seletivo_inscricaos.nome')
-            ->distinct()  // Isso vai garantir que as inscrições sejam distintas, sem repetições.
-            ->paginate(15);
-        return view('processoSeletivo.inscricoes.index', [
-            'id_processo_seletivo' => $id_processo_seletivo,
-            'data' => $data,
-            'processo_seletivo' => $processo_seletivo,
-        ]);
+        if($id_processo_seletivo > 17){
+            $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+            $data = DB::table('processo_seletivo_inscricaos')
+                ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', '=', 'processo_seletivo_cursos.id')
+                ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', '=', 'auxiliar_tipo_documentos.id')
+                ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', '=', 'auxiliar_municipios.id')
+                ->leftJoin(
+                    DB::raw('(SELECT MAX(id) AS id, id_inscricao
+                            FROM processo_seletivo_analises
+                            GROUP BY id_inscricao) AS max_analises'),
+                    'processo_seletivo_inscricaos.id',
+                    '=',
+                    'max_analises.id_inscricao'
+                )
+                ->leftJoin('processo_seletivo_analises', 'processo_seletivo_analises.id', '=', 'max_analises.id')
+                ->select(
+                    'processo_seletivo_inscricaos.id as id', 
+                    'auxiliar_tipo_documentos.nome as tipo_documento', 
+                    'processo_seletivo_inscricaos.numero_documento', 
+                    'processo_seletivo_inscricaos.nome', 
+                    'processo_seletivo_analises.status as status', 
+                    'titulo as curso', 
+                    'auxiliar_municipios.nome as cidade', 
+                    'processo_seletivo_analises.analisado_por as analisado_por'
+                )
+                ->where('processo_seletivo_cursos.id_processo_seletivo', '=', $id_processo_seletivo)
+                ->orderBy('processo_seletivo_analises.status')
+                ->orderBy('processo_seletivo_inscricaos.nome')
+                ->distinct()  // Isso vai garantir que as inscrições sejam distintas, sem repetições.
+                ->paginate(15);
+            return view('processoSeletivo.inscricoes.index', [
+                'id_processo_seletivo' => $id_processo_seletivo,
+                'data' => $data,
+                'processo_seletivo' => $processo_seletivo,
+            ]);
+        //ABAIXO O ANTIGO
+        }else{
+            $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+            $data = DB::table('processo_seletivo_inscricaos')
+                        ->distinct('processo_seletivo_inscricaos.id')
+                        ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+                        ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
+                        ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
+                        ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
+                        ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
+                        ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+                        ->orderBy('processo_seletivo_inscricao_notas.status')
+                        ->orderBy('processo_seletivo_inscricaos.nome')
+                        ->paginate(15);
+            // $data = ProcessoSeletivoInscricao::orderBy('nome')->paginate(15);
+            // return $data;
+            return view('processoSeletivo.inscricoes.index_antigo', [
+                'id_processo_seletivo' => $id_processo_seletivo,
+                'data' => $data,
+                'processo_seletivo' => $processo_seletivo,
+            ]);
+        }
     }
 
     public function json($id_processo_seletivo)
@@ -345,86 +350,101 @@ class ProcessoSeletivoInscricaoController extends Controller
 
     public function indexSearch(Request $request, $id_processo_seletivo)
     {
-	$processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
-    // $data = DB::table('processo_seletivo_inscricaos')
-    //             ->distinct('processo_seletivo_inscricaos.id')
-    //             ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
-    //             ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
-    //             ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
-    //             // ->leftjoin('processo_seletivo_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_notas.id_inscricao')
-    //             ->leftjoin('processo_seletivo_analises', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
-    //             ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_analises.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade', 'processo_seletivo_analises.analisado_por as analisado_por')
-    //             ->whereIn('processo_seletivo_analises.id', function($query){
-    //                 $query->select(DB::raw('MAX(processo_seletivo_analises.id)'))
-    //                 ->from('processo_seletivo_analises')
-    //                 ->groupBy('processo_seletivo_analises.id_inscricao');
-    //             })
-    //             ->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%")
-    //             ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' )
-    //             ->orWhere('processo_seletivo_analises.analisado_por', 'LIKE', '%'.$request->pesquisa.'%' )
-    //             ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
-    //             ->orderBy('processo_seletivo_analises.status')
-    //             ->orderBy('processo_seletivo_inscricaos.nome')
-    //             ->paginate(15);      
+        if ($id_processo_seletivo > 17) {
+            $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+            $data = DB::table('processo_seletivo_inscricaos')
+                    ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', '=', 'processo_seletivo_cursos.id')
+                    ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', '=', 'auxiliar_tipo_documentos.id')
+                    ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', '=', 'auxiliar_municipios.id')
+                    ->leftJoin(
+                        DB::raw('(SELECT MAX(id) AS id, id_inscricao
+                                FROM processo_seletivo_analises
+                                GROUP BY id_inscricao) AS max_analises'),
+                        'processo_seletivo_inscricaos.id',
+                        '=',
+                        'max_analises.id_inscricao'
+                    )
+                    ->leftJoin('processo_seletivo_analises', 'processo_seletivo_analises.id', '=', 'max_analises.id')
+                    ->select(
+                        'processo_seletivo_inscricaos.id as id', 
+                        'auxiliar_tipo_documentos.nome as tipo_documento', 
+                        'processo_seletivo_inscricaos.numero_documento', 
+                        'processo_seletivo_inscricaos.nome', 
+                        'processo_seletivo_analises.status as status', 
+                        'titulo as curso', 
+                        'auxiliar_municipios.nome as cidade', 
+                        'processo_seletivo_analises.analisado_por as analisado_por'
+                    )
+                    ->where('processo_seletivo_cursos.id_processo_seletivo', '=', $id_processo_seletivo)
+                    ->where(function($query) use($request) {
+                        $query->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%") // Primeira condição OR
+                            ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' ) // Segunda condição OR
+                            ->orWhere('processo_seletivo_analises.analisado_por', 'LIKE', '%'.$request->pesquisa.'%' );
+                    })         
+                    ->orderBy('processo_seletivo_analises.status')
+                    ->orderBy('processo_seletivo_inscricaos.nome')
+                    ->distinct()  // Isso vai garantir que as inscrições sejam distintas, sem repetições.
+                    ->paginate(15);
 
+            // $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
+                //return $data;
+            return view('processoSeletivo.inscricoes.index', [
+                'id_processo_seletivo' => $id_processo_seletivo,
+                'data' => $data,
+                'processo_seletivo' => $processo_seletivo,
+            ]);
 
-    $data = DB::table('processo_seletivo_inscricaos')
-            ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', '=', 'processo_seletivo_cursos.id')
-            ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', '=', 'auxiliar_tipo_documentos.id')
-            ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', '=', 'auxiliar_municipios.id')
-            ->leftJoin(
-                DB::raw('(SELECT MAX(id) AS id, id_inscricao
-                        FROM processo_seletivo_analises
-                        GROUP BY id_inscricao) AS max_analises'),
-                'processo_seletivo_inscricaos.id',
-                '=',
-                'max_analises.id_inscricao'
-            )
-            ->leftJoin('processo_seletivo_analises', 'processo_seletivo_analises.id', '=', 'max_analises.id')
-            ->select(
-                'processo_seletivo_inscricaos.id as id', 
-                'auxiliar_tipo_documentos.nome as tipo_documento', 
-                'processo_seletivo_inscricaos.numero_documento', 
-                'processo_seletivo_inscricaos.nome', 
-                'processo_seletivo_analises.status as status', 
-                'titulo as curso', 
-                'auxiliar_municipios.nome as cidade', 
-                'processo_seletivo_analises.analisado_por as analisado_por'
-            )
-            ->where('processo_seletivo_cursos.id_processo_seletivo', '=', $id_processo_seletivo)
-            ->where(function($query) use($request) {
-                $query->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%") // Primeira condição OR
-                    ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' ) // Segunda condição OR
-                    ->orWhere('processo_seletivo_analises.analisado_por', 'LIKE', '%'.$request->pesquisa.'%' );
-            })         
-            ->orderBy('processo_seletivo_analises.status')
-            ->orderBy('processo_seletivo_inscricaos.nome')
-            ->distinct()  // Isso vai garantir que as inscrições sejam distintas, sem repetições.
-            ->paginate(15);
-
-	// $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
-        //return $data;
-	return view('processoSeletivo.inscricoes.index', [
-            'id_processo_seletivo' => $id_processo_seletivo,
-            'data' => $data,
-            'processo_seletivo' => $processo_seletivo,
-        ]);
+        // ABAIXO O ANTIGO
+        }else{
+            $processo_seletivo = ProcessoSeletivo::findOrFail($id_processo_seletivo);
+            $data = DB::table('processo_seletivo_inscricaos')
+                        ->distinct('processo_seletivo_inscricaos.id')
+                        ->join('processo_seletivo_cursos', 'processo_seletivo_inscricaos.id_processo_seletivo_curso', 'processo_seletivo_cursos.id')
+                        ->join('auxiliar_tipo_documentos', 'processo_seletivo_inscricaos.id_tipo_documento', 'auxiliar_tipo_documentos.id')
+                        ->join('auxiliar_municipios', 'processo_seletivo_cursos.id_municipio', 'auxiliar_municipios.id')
+                        ->leftjoin('processo_seletivo_inscricao_notas', 'processo_seletivo_inscricaos.id', 'processo_seletivo_inscricao_notas.id_inscricao')
+                        ->select('processo_seletivo_inscricaos.id as id', 'auxiliar_tipo_documentos.nome as tipo_documento', 'processo_seletivo_inscricaos.numero_documento', 'processo_seletivo_inscricaos.nome', 'processo_seletivo_inscricao_notas.status as status', 'titulo as curso', 'auxiliar_municipios.nome as cidade')
+                        ->where('processo_seletivo_inscricaos.nome', 'LIKE', "%".$request->pesquisa."%")
+                        ->orWhere('auxiliar_municipios.nome', 'LIKE', '%'.$request->pesquisa.'%' )
+                        ->where('processo_seletivo_cursos.id_processo_seletivo', $id_processo_seletivo)
+                        ->orderBy('processo_seletivo_inscricao_notas.status')
+                        ->orderBy('processo_seletivo_inscricaos.nome')
+                        ->paginate(15);       
+            // $data = ProcessoSeletivoInscricao::where('nome', 'LIKE', "%".$request->pesquisa."%")->paginate(15);
+                //return $data;
+            return view('processoSeletivo.inscricoes.index_antigo', [
+                    'id_processo_seletivo' => $id_processo_seletivo,
+                    'data' => $data,
+                    'processo_seletivo' => $processo_seletivo,
+                ]);
+        }
     }
 
     public function detalhes($id_processo_seletivo, $id){
-        $data = ProcessoSeletivoInscricao::findOrFail($id);
-        $configuracoes = ProcessoSeletivoConfiguracao::with('documento')->where('id_processo_seletivo', $id_processo_seletivo)->get();
-        $data_analise = ProcessoSeletivoAnalise::where('id_inscricao', $id)->orderBy('id', 'desc')->first();
-        if($data_analise){
-            $data_nota = ProcessoSeletivoNota::where('id_processo_seletivo_analise', @$data_analise->id)->get()->keyBy('id_processo_seletivo_doc');
+        // MUDAR FUTURAMENTE
+        if($id_processo_seletivo > 17){
+            $data = ProcessoSeletivoInscricao::findOrFail($id);
+            $configuracoes = ProcessoSeletivoConfiguracao::with('documento')->where('id_processo_seletivo', $id_processo_seletivo)->get();
+            $data_analise = ProcessoSeletivoAnalise::where('id_inscricao', $id)->orderBy('id', 'desc')->first();
+            if($data_analise){
+                $data_nota = ProcessoSeletivoNota::where('id_processo_seletivo_analise', @$data_analise->id)->get()->keyBy('id_processo_seletivo_doc');
+            }
+            return view('processoSeletivo.inscricoes.detalhes', [
+                'id_processo_seletivo' => $id_processo_seletivo,
+                'configuracoes' => $configuracoes,
+                'data' => $data,
+                'data_analise' => @$data_analise,
+                'data_nota' => @$data_nota,
+            ]);
+        }else{
+            $data = ProcessoSeletivoInscricao::findOrFail($id);
+            $data_nota = ProcessoSeletivoInscricaoNota::where('id_inscricao', $id)->first();
+            return view('processoSeletivo.inscricoes.detalhes_antigo', [
+                'id_processo_seletivo' => $id_processo_seletivo,
+                'data' => $data,
+                'data_nota' => $data_nota,
+            ]);
         }
-        return view('processoSeletivo.inscricoes.detalhes', [
-            'id_processo_seletivo' => $id_processo_seletivo,
-            'configuracoes' => $configuracoes,
-            'data' => $data,
-            'data_analise' => @$data_analise,
-            'data_nota' => @$data_nota,
-        ]);
     }
 
     public function downloadArquivo($path){
