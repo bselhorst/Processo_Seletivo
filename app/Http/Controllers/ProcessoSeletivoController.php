@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\AuxiliarTipoDocumento;
 use App\Models\ProcessoSeletivo;
 use App\Models\ProcessoSeletivoAnalise;
 use App\Models\ProcessoSeletivoConfiguracao;
@@ -682,5 +683,85 @@ class ProcessoSeletivoController extends Controller
         return view('processoSeletivo.pessoas.index', [
             'data' => $data,
         ]);
+    }
+
+    public function resultadoAntigo($id){
+         $cursos = ProcessoSeletivoCurso::where('id_processo_seletivo', $id)->orderBy('titulo')->pluck('id');
+        $inscricao = ProcessoSeletivoInscricao::whereIn('id_processo_seletivo_curso', $cursos)->orderBy('id_processo_seletivo_curso')->pluck('id');
+        $documento = AuxiliarTipoDocumento::all()->keyBy('id');
+        $data = ProcessoSeletivoInscricaoNota::select('*', DB::raw('nota_titulacao + nota_qualificacao + nota_exp_profissional + nota_comprovante_endereco + nota_carta_intencao as total') )
+        ->whereIn('id_inscricao', $inscricao)
+        ->where('status', 'Deferido')
+        ->orderBy('total', 'DESC')
+        ->get()
+        ->sortBy(
+            function($item){
+                return $item->inscricao->curso->municipio->nome;
+            }
+        )
+        ->sortBy(
+            function($item){
+                return $item->inscricao->curso->titulo;
+            }
+        );
+
+        //Exportar o Excel
+        $fileName = 'Resultado.csv';        
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Email', 'Documento', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Nota Comprovante de Endereço', 'Nota Carta de Intenção', 'Total', 'Criado em', 'Mensagem');
+
+        $callback = function() use($data, $columns, $documento) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($data as $item) {
+                if ($item->inscricao->curso->titulo != @$old_titulo && @$old_titulo != null){
+                    $row['ID']  = '';
+                    $row['Município']  = '';
+                    $row['Curso']  = '';
+                    $row['Nome']    = '';
+                    $row['Email']    = '';
+                    $row['Tipo Documento'] = '';
+                    $row['Documento']    = '';
+                    $row['Nota Titulação']    = '';
+                    $row['Nota Qualificação']    = '';
+                    $row['Nota Exp. Profissional']    = '';
+                    $row['Nota Comprovante de Endereço']    = '';
+                    $row['Nota Carta de Intenção']    = '';
+                    $row['Total']    = '';
+                    $row['Criado em']    = '';
+		            $row['Mensagem']    = '';
+                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Email'], $row['Tipo Documento'], $row['Documento'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+                }
+                $row['ID']  = $item->id_inscricao;
+                $row['Município']  = $item->inscricao->curso->municipio->nome;
+                $row['Curso']  = $item->inscricao->curso->titulo;
+                $row['Nome']    = $item->inscricao->nome;
+                $row['Email']    = $item->inscricao->email;
+                $row['Tipo Documento']    = $documento[$item->inscricao->id_tipo_documento]->nome;
+                $row['Documento']    = $item->inscricao->numero_documento;
+                $row['Nota Titulação']    = $item->nota_titulacao;
+                $row['Nota Qualificação']    = $item->nota_qualificacao;
+                $row['Nota Exp. Profissional']    = $item->nota_exp_profissional;
+                $row['Nota Comprovante de Endereço']    = $item->nota_comprovante_endereco;
+                $row['Nota Carta de Intenção']    = $item->nota_carta_intencao;
+                $row['Total']    = $item->total;
+                $row['Criado em']    = $item->inscricao->created_at;
+		        $row['Mensagem']    = $item->mensagem;
+                $old_titulo = $item->inscricao->curso->titulo;
+
+                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Email'], $row['Tipo Documento'], $row['Documento'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
