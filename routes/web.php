@@ -77,6 +77,7 @@ Route::prefix('processoseletivo')->group(function () {
     Route::patch('/{id}', [ProcessoSeletivoController::class, 'update'])->middleware(['auth', 'verified'])->name('ps.update');
     Route::delete('/{id}', [ProcessoSeletivoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('ps.destroy');
     Route::get('/{id}/resultado', [ProcessoSeletivoController::class, 'resultado'])->middleware(['auth', 'verified'])->name('ps.resultado');
+    Route::get('/{id}/resultadoxls', [ProcessoSeletivoController::class, 'resultadoxls'])->middleware(['auth', 'verified'])->name('ps.resultado.xls');
     Route::get('/{id}/resultadoAntigo', [ProcessoSeletivoController::class, 'resultadoAntigo'])->middleware(['auth', 'verified'])->name('ps.resultado_antigo');
     Route::get('/{id}/indeferidos', [ProcessoSeletivoController::class, 'indeferidos'])->middleware(['auth', 'verified'])->name('ps.indeferidos');
     // Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
@@ -278,24 +279,29 @@ Route::get('/dashboard', function () {
 //     Mail::to($email)->send(new Confirmacao($teste));
 // });
 
-Route::get('/emailteste', function() {
-    $teste = [
-        "nome" => "Bruno Oliveira Selhorst",
-        "id_processo_seletivo" => 1,
-        "id_processo_seletivo_curso" => 2,
-        "id_tipo_documento" => 1,
-        "numero_documento" => "132132132",
-        "numero_contato" => "32132132132",
-        "email" => "teste@teste.com"
-    ];
-    return view('mail.confirmacao' , [
-        'data' => $teste
-    ]);
-});
+// Route::get('/emailteste', function() {
+//     $teste = [
+//         "nome" => "Bruno Oliveira Selhorst",
+//         "id_processo_seletivo" => 1,
+//         "id_processo_seletivo_curso" => 2,
+//         "id_tipo_documento" => 1,
+//         "numero_documento" => "132132132",
+//         "numero_contato" => "32132132132",
+//         "email" => "teste@teste.com"
+//     ];
+//     return view('mail.confirmacao' , [
+//         'data' => $teste
+//     ]);
+// });
 
-Route::get('/teste/paginaprincipal', function () {
-    return view('teste.paginaprincipal');
-});
+// Route::get('/teste/paginaprincipal', function () {
+//     return view('teste.paginaprincipal');
+// });
+
+// Route::get('teste-xls/{id}', [ProcessoSeletivoController::class, 'testexls']);
+Route::get('/resultadoxls/{id}/{inscricao}', [ProcessoSeletivoController::class, 'resultadoteste']);
+// Route::get('teste-resultado/{id}', [ProcessoSeletivoController::class, 'resultado']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

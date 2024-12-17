@@ -74,21 +74,21 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Nome Completo <span class="text-danger">*</span></label>
                     <div class="col-lg-5">
-                        <input type="text" name="nome" class="form-control" required=""
+                        <input type="text" name="nome" id="nome" class="form-control" required=""
                             placeholder="Nome completo sem abreviações" aria-invalid="false">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Data de Nascimento <span class="text-danger">*</span></label>
                     <div class="col-lg-4">
-                        <input type="date" name="data_nascimento" class="form-control" required=""
+                        <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" required=""
                             aria-invalid="false">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Tipo de Documento <span class="text-danger">*</span></label>
                     <div class="col-lg-4">
-                        <select name="id_tipo_documento" class="form-select" required="">
+                        <select name="id_tipo_documento" id="id_tipo_documento" class="form-select" required="">
                             <option value="">Escolha um tipo de documento abaixo</option>
                             @foreach (@$tipo_documentos as $tipo)
                                 <option value="{{ $tipo->id }}">{{ $tipo->nome }}</option>
@@ -100,7 +100,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Número do documento <span class="text-danger">*</span></label>
                     <div class="col-lg-4">
-                        <input type="text" name="numero_documento" class="form-control" required=""
+                        <input type="text" name="numero_documento" id="numero_documento" class="form-control" required=""
                             placeholder="Ex: 12345678901" aria-invalid="false">
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Endereço<span class="text-danger">*</span></label>
                     <div class="col-lg-9">
-                        <input type="text" name="endereco" class="form-control" required=""
+                        <input type="text" name="endereco" id="endereco" class="form-control" required=""
                             placeholder="Ex: Rua 7 de Setembro, 000" aria-invalid="false">
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Bairro</label>
                     <div class="col-lg-4">
-                        <input type="text" name="bairro" class="form-control" placeholder="Ex: Centro"
+                        <input type="text" name="bairro" id="bairro" class="form-control" placeholder="Ex: Centro"
                             aria-invalid="false">
                     </div>
                 </div>
@@ -370,7 +370,19 @@
 
 @push('scripts')   
     <script>
-        document.getElementById('formulario-inscricao').addEventListener('submit', function(event) {            
+        document.getElementById('formulario-inscricao').addEventListener('submit', function(event) {   
+            if(
+                !document.getElementById('nome').value ||
+                !document.getElementById('data_nascimento').value ||
+                !document.getElementById('id_tipo_documento').value ||
+                !document.getElementById('numero_documento').value ||
+                !document.getElementById('endereco').value ||
+                !document.getElementById('numero_contato').value ||
+                !document.getElementById('email').value
+            ){
+                // alert("Você esqueceu de preencher algum campo obrigatório!")
+                return
+            }         
             // Desabilita o botão de envio
             const submitBtn = document.getElementById('submit-button');
             submitBtn.disabled = true;
@@ -379,11 +391,16 @@
             let isValid = true;
 
             fileInputs.forEach(function(input) {
-                if(!input.hasAttribute('aria-invalid', 'false')){
+                // console.log(input.files.length);
+                if(input.files.length == 0){
                     isValid = false;
-                    // alert("teste");
-                    return;
+                    return
                 }
+                // if(!input.hasAttribute('aria-invalid', 'false')){
+                //     isValid = false;
+                //     // alert("teste");
+                //     return;
+                // }
             })
 
             // Se algum campo não for válido, impede o envio
@@ -391,11 +408,12 @@
                 alert("Está faltando algum documento obrigatório!");
                 event.preventDefault();
                 // Desabilita o botão de envio
-                    const submitBtn = document.getElementById('submit-button');
-                    submitBtn.disabled = false;
+                // if (document.getElementByName("data_nascimento").value)
+                const submitBtn = document.getElementById('submit-button');
+                submitBtn.disabled = false;
                 return; // não envia o formulário
             }        
-});
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
 

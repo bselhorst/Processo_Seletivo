@@ -16,6 +16,11 @@ use App\Models\ProcessoSeletivoInscricao;
 use App\Models\ProcessoSeletivoInscricaoNota;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Font;
 
 use Illuminate\Support\Collection;
 
@@ -215,7 +220,7 @@ class ProcessoSeletivoController extends Controller
                                                     processo_seletivo_analises.mensagem'
                                                     )
         // joins específicos
-        ->join('processo_seletivo_notas', 'processo_seletivo_analises.id', 'processo_seletivo_notas.id_processo_seletivo_analise')
+        ->leftjoin('processo_seletivo_notas', 'processo_seletivo_analises.id', 'processo_seletivo_notas.id_processo_seletivo_analise')
         ->join('processo_seletivo_inscricaos', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
         ->join('processo_seletivo_cursos', 'processo_seletivo_cursos.id', 'processo_seletivo_inscricaos.id_processo_seletivo_curso')
         ->join('auxiliar_municipios', 'auxiliar_municipios.id', 'processo_seletivo_cursos.id_municipio')
@@ -714,7 +719,7 @@ class ProcessoSeletivoController extends Controller
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
             "Expires"             => "0"
         );
-        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Email', 'Documento', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Nota Comprovante de Endereço', 'Nota Carta de Intenção', 'Total', 'Criado em', 'Mensagem');
+        $columns = array('ID', 'Município', 'Curso', 'Nome', 'Contato', 'Email', 'Tipo Documento', 'Documento', 'Nota Titulação', 'Nota Qualificação', 'Nota Exp. Profissional', 'Nota Comprovante de Endereço', 'Nota Carta de Intenção', 'Total', 'Criado em', 'Mensagem');
 
         $callback = function() use($data, $columns, $documento) {
             $file = fopen('php://output', 'w');
@@ -726,6 +731,7 @@ class ProcessoSeletivoController extends Controller
                     $row['Município']  = '';
                     $row['Curso']  = '';
                     $row['Nome']    = '';
+                    $row['Contato']    = '';
                     $row['Email']    = '';
                     $row['Tipo Documento'] = '';
                     $row['Documento']    = '';
@@ -737,12 +743,13 @@ class ProcessoSeletivoController extends Controller
                     $row['Total']    = '';
                     $row['Criado em']    = '';
 		            $row['Mensagem']    = '';
-                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Email'], $row['Tipo Documento'], $row['Documento'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+                    fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Contato'], $row['Email'], $row['Tipo Documento'], $row['Documento'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
                 }
                 $row['ID']  = $item->id_inscricao;
                 $row['Município']  = $item->inscricao->curso->municipio->nome;
                 $row['Curso']  = $item->inscricao->curso->titulo;
                 $row['Nome']    = $item->inscricao->nome;
+                $row['Contato']    = $item->inscricao->numero_contato;
                 $row['Email']    = $item->inscricao->email;
                 $row['Tipo Documento']    = $documento[$item->inscricao->id_tipo_documento]->nome;
                 $row['Documento']    = $item->inscricao->numero_documento;
@@ -756,12 +763,378 @@ class ProcessoSeletivoController extends Controller
 		        $row['Mensagem']    = $item->mensagem;
                 $old_titulo = $item->inscricao->curso->titulo;
 
-                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Email'], $row['Tipo Documento'], $row['Documento'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
+                fputcsv($file, array($row['ID'], $row['Município'], $row['Curso'], $row['Nome'], $row['Contato'], $row['Email'], $row['Tipo Documento'], $row['Documento'], $row['Nota Titulação'], $row['Nota Qualificação'], $row['Nota Exp. Profissional'], $row['Nota Comprovante de Endereço'], $row['Nota Carta de Intenção'], $row['Total'], $row['Criado em'], $row['Mensagem']));
             }
 
             fclose($file);
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function resultadoxls($id){     
+
+        // Dados com as informações necessárias
+        $data = ProcessoSeletivoAnalise::selectRaw(
+                                                    'processo_seletivo_analises.id, 
+                                                    processo_seletivo_analises.id_inscricao, 
+                                                    auxiliar_municipios.nome as municipio,
+                                                    processo_seletivo_cursos.titulo as curso, 
+                                                    UPPER(processo_seletivo_inscricaos.nome),
+                                                    processo_seletivo_analises.mensagem'
+                                                    )
+        ->leftjoin('processo_seletivo_notas', 'processo_seletivo_analises.id', 'processo_seletivo_notas.id_processo_seletivo_analise')
+        ->join('processo_seletivo_inscricaos', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
+        ->join('processo_seletivo_cursos', 'processo_seletivo_cursos.id', 'processo_seletivo_inscricaos.id_processo_seletivo_curso')
+        ->join('auxiliar_municipios', 'auxiliar_municipios.id', 'processo_seletivo_cursos.id_municipio')
+        ->whereIn('processo_seletivo_analises.id', function($query){
+            $query->select(DB::raw('MAX(processo_seletivo_analises.id)'))
+            ->from('processo_seletivo_analises')
+            ->groupBy('processo_seletivo_analises.id_inscricao');
+        })
+        ->where('processo_seletivo_cursos.id_processo_seletivo', $id)
+        ->where('processo_seletivo_analises.status', 'LIKE','Deferido')
+        ->groupBy('processo_seletivo_analises.id', 
+                'processo_seletivo_analises.id_inscricao', 
+                'processo_seletivo_cursos.id', 
+                'processo_seletivo_cursos.titulo', 
+                'processo_seletivo_cursos.id_municipio', 
+                'auxiliar_municipios.nome', 
+                'processo_seletivo_inscricaos.nome',
+                'processo_seletivo_analises.mensagem')
+        ->orderBy('municipio')
+        ->orderBy('curso')
+        ->orderByDesc(DB::raw('SUM(processo_seletivo_notas.nota)'))
+        ->get();
+
+        // Info para pegar o nome dos documentos e criar um dicionário
+        $info = ProcessoSeletivoConfiguracao::join('processo_seletivo_documentos', 'processo_seletivo_documentos.id', 'processo_seletivo_configuracaos.id_processo_seletivo_doc')
+        ->where('id_processo_seletivo', $id)
+        ->get()
+        ->keyBy('id_processo_seletivo_doc');
+
+        // Processamento de notas
+        $data = $data->map(function ($data) use ($info) {
+            $notas = DB::table('processo_seletivo_notas')
+            ->where('processo_seletivo_notas.id_processo_seletivo_analise', $data->id)
+            ->orderBy('processo_seletivo_notas.id_processo_seletivo_doc')
+            ->pluck('nota', 'id_processo_seletivo_doc')
+            ->toArray();
+
+            //adicionar as notas como novas colunas no resultado
+            $total = 0;
+            foreach ($notas as $index => $nota){
+                $data->{'Nota '. ($info[$index]->nome)} = $nota;
+                $total += $nota; 
+            }
+            $data->total = $total;
+
+            // Mover o valor da coluna "mensagem" para o final
+            $mensagem = $data->mensagem;
+            unset($data->mensagem);
+            $data->mensagem = $mensagem;
+
+            return $data;
+        });
+        // Pega a configuração do processo seletivo
+        $configuracao = ProcessoSeletivoConfiguracao::join('processo_seletivo_documentos', 'processo_seletivo_documentos.id', 'processo_seletivo_configuracaos.id_processo_seletivo_doc')
+        ->where('id_processo_seletivo', $id)
+        ->get();
+        
+        // Cria as colunas que vai no arquivo do excel
+        $columns = collect(['ID', 'Inscrição', 'Município', 'Curso', 'Nome']);
+        // Itera a configuração de da push na coluna das notas
+        foreach ($configuracao as $conf){
+            if($conf->pontuacao){
+                $columns->push("Nota ".$conf->nome);
+            }
+        }
+        // Adiciona as informações finais
+        $columns->push('Total');
+        $columns->push('Mensagem');
+
+        // Criação da planilha Excel
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Preencher as linhas com os dados
+        $rowNum = 1; // Começa a partir da segunda linha
+        $numColunas = (@$data[0]) ? count($data[0]->getAttributes()) : 0;
+        $array_branco = array_fill(0, $numColunas, '');
+        $old_title = '';
+        
+        foreach ($data as $item) {
+            if($old_title == '' || $old_title != $item->curso){
+                if($old_title != ''){
+                    $sheet->insertNewRowBefore($rowNum, 1);
+                    $rowNum++;
+                }
+                $sheet->insertNewRowBefore($rowNum, 1);
+
+                // Converte o número de colunas para o nome da última coluna
+                $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($numColunas);
+                // Mescla as células da linha 5 (de A até a última coluna necessária, por exemplo, 'Z')
+                $sheet->mergeCells('A' . $rowNum . ':'. $lastColumn . $rowNum);
+                // Define o título para a linha mesclada
+                $sheet->setCellValue('A' . $rowNum, $item->municipio." - ".$item->curso);
+                // Centraliza o título
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getAlignment()
+                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+                // Define o fundo verde (4CAF50) e a cor da fonte branca
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('4CAF50'); // Fundo verde
+
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFont()
+                    ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'))  // Cor da fonte branca
+                    ->setBold(true)  // Fonte em negrito
+                    ->setSize(12);   // Tamanho da fonte
+                $rowNum++;
+                $sheet->fromArray($columns->all(), NULL, 'A'.$rowNum);
+                // Define o fundo verde (4CAF50) e a cor da fonte branca
+
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFont()  // Cor da fonte branca
+                    ->setBold(true)  // Fonte em negrito
+                    ->setSize(12);
+                $rowNum++;
+                $old_title = $item->curso;
+            }
+            $item = json_decode($item, true);
+
+            // Preenche as células
+            $sheet->fromArray($item, NULL, 'A'.$rowNum, true);
+            
+            $rowNum++;
+        }
+
+        // Nome do Arquivo
+        $filename = 'Resultado.xlsx';
+
+        foreach (range('A', 'Z') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Cria o escritor Excel (Xlsx)
+        $writer = new Xlsx($spreadsheet);
+
+        // Configura o cabeçalho para forçar o download
+        return response()->stream(
+            function () use ($writer) {
+                $writer->save('php://output');
+            },
+            200,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]
+        );
+    }
+
+    public function resultadoteste($id, $id_inscricao){     
+        // Dados com as informações necessárias
+        // $data = ProcessoSeletivoAnalise::selectRaw(
+        //                                             'processo_seletivo_analises.id, 
+        //                                             processo_seletivo_analises.id_inscricao, 
+        //                                             auxiliar_municipios.nome as municipio,
+        //                                             processo_seletivo_cursos.titulo as curso, 
+        //                                             UPPER(processo_seletivo_inscricaos.nome),
+        //                                             processo_seletivo_analises.mensagem'
+        //                                             )
+        // ->join('processo_seletivo_notas', 'processo_seletivo_analises.id', 'processo_seletivo_notas.id_processo_seletivo_analise')
+        // ->join('processo_seletivo_inscricaos', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
+        // ->join('processo_seletivo_cursos', 'processo_seletivo_cursos.id', 'processo_seletivo_inscricaos.id_processo_seletivo_curso')
+        // ->join('auxiliar_municipios', 'auxiliar_municipios.id', 'processo_seletivo_cursos.id_municipio')
+        // ->whereIn('processo_seletivo_analises.id', function($query){
+        //     $query->select(DB::raw('MAX(processo_seletivo_analises.id)'))
+        //     ->from('processo_seletivo_analises')
+        //     ->groupBy('processo_seletivo_analises.id_inscricao');
+        // })
+        // ->where('processo_seletivo_cursos.id_processo_seletivo', $id)
+        // ->where('processo_seletivo_analises.status', 'LIKE','Deferido')
+        // ->groupBy('processo_seletivo_analises.id', 
+        //         'processo_seletivo_analises.id_inscricao', 
+        //         'processo_seletivo_cursos.id', 
+        //         'processo_seletivo_cursos.titulo', 
+        //         'processo_seletivo_cursos.id_municipio', 
+        //         'auxiliar_municipios.nome', 
+        //         'processo_seletivo_inscricaos.nome',
+        //         'processo_seletivo_analises.mensagem')
+        // ->orderBy('municipio')
+        // ->orderBy('curso')
+        // ->orderByDesc(DB::raw('SUM(processo_seletivo_notas.nota)'))
+        // ->get();
+
+        $data = ProcessoSeletivoAnalise::selectRaw(
+                                                    'processo_seletivo_analises.id, 
+                                                    processo_seletivo_analises.id_inscricao, 
+                                                    auxiliar_municipios.nome as municipio,
+                                                    processo_seletivo_cursos.titulo as curso, 
+                                                    UPPER(processo_seletivo_inscricaos.nome),
+                                                    processo_seletivo_analises.mensagem'
+                                                    )
+        ->leftjoin('processo_seletivo_notas', 'processo_seletivo_analises.id', 'processo_seletivo_notas.id_processo_seletivo_analise')
+        ->join('processo_seletivo_inscricaos', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
+        ->join('processo_seletivo_cursos', 'processo_seletivo_cursos.id', 'processo_seletivo_inscricaos.id_processo_seletivo_curso')
+        ->join('auxiliar_municipios', 'auxiliar_municipios.id', 'processo_seletivo_cursos.id_municipio')
+        ->whereIn('processo_seletivo_analises.id', function($query){
+            $query->select(DB::raw('MAX(processo_seletivo_analises.id)'))
+            ->from('processo_seletivo_analises')
+            ->groupBy('processo_seletivo_analises.id_inscricao');
+        })
+        ->where('processo_seletivo_cursos.id_processo_seletivo', $id)
+        ->where('processo_seletivo_analises.status', 'LIKE','Deferido')
+        ->groupBy('processo_seletivo_analises.id', 
+                'processo_seletivo_analises.id_inscricao', 
+                'processo_seletivo_cursos.id', 
+                'processo_seletivo_cursos.titulo', 
+                'processo_seletivo_cursos.id_municipio', 
+                'auxiliar_municipios.nome', 
+                'processo_seletivo_inscricaos.nome',
+                'processo_seletivo_analises.mensagem')
+        ->orderBy('municipio')
+        ->orderBy('curso')
+        ->orderByDesc(DB::raw('SUM(processo_seletivo_notas.nota)'))
+        ->get();
+
+        // return $data2->diff($data);
+
+        // Info para pegar o nome dos documentos e criar um dicionário
+        $info = ProcessoSeletivoConfiguracao::join('processo_seletivo_documentos', 'processo_seletivo_documentos.id', 'processo_seletivo_configuracaos.id_processo_seletivo_doc')
+        ->where('id_processo_seletivo', $id)
+        ->get()
+        ->keyBy('id_processo_seletivo_doc');
+
+        // Processamento de notas
+        $data = $data->map(function ($data) use ($info) {
+            $notas = DB::table('processo_seletivo_notas')
+            ->where('processo_seletivo_notas.id_processo_seletivo_analise', $data->id)
+            ->orderBy('processo_seletivo_notas.id_processo_seletivo_doc')
+            ->pluck('nota', 'id_processo_seletivo_doc')
+            ->toArray();
+
+            //adicionar as notas como novas colunas no resultado
+            $total = 0;
+            foreach ($notas as $index => $nota){
+                $data->{'Nota '. ($info[$index]->nome)} = $nota;
+                $total += $nota; 
+            }
+            $data->total = $total;
+
+            // Mover o valor da coluna "mensagem" para o final
+            $mensagem = $data->mensagem;
+            unset($data->mensagem);
+            $data->mensagem = $mensagem;
+
+            return $data;
+        });
+        // Pega a configuração do processo seletivo
+        $configuracao = ProcessoSeletivoConfiguracao::join('processo_seletivo_documentos', 'processo_seletivo_documentos.id', 'processo_seletivo_configuracaos.id_processo_seletivo_doc')
+        ->where('id_processo_seletivo', $id)
+        ->get();
+        
+        // Cria as colunas que vai no arquivo do excel
+        $columns = collect(['ID', 'Inscrição', 'Município', 'Curso', 'Nome']);
+        // Itera a configuração de da push na coluna das notas
+        foreach ($configuracao as $conf){
+            if($conf->pontuacao){
+                $columns->push("Nota ".$conf->nome);
+            }
+        }
+        // Adiciona as informações finais
+        $columns->push('Total');
+        $columns->push('Mensagem');
+
+        // Criação da planilha Excel
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Preencher as linhas com os dados
+        $rowNum = 1; // Começa a partir da segunda linha
+        $numColunas = (@$data[0]) ? count($data[0]->getAttributes()) : 0;
+        $array_branco = array_fill(0, $numColunas, '');
+        $old_title = '';
+
+        return $data;
+        
+        foreach ($data as $item) {
+            if($item->inscricao == $id_inscricao){
+                return $item;
+            }
+            if($old_title == '' || $old_title != $item->curso){
+                if($old_title != ''){
+                    $sheet->insertNewRowBefore($rowNum, 1);
+                    $rowNum++;
+                }
+                $sheet->insertNewRowBefore($rowNum, 1);
+
+                // Converte o número de colunas para o nome da última coluna
+                $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($numColunas);
+                // Mescla as células da linha 5 (de A até a última coluna necessária, por exemplo, 'Z')
+                $sheet->mergeCells('A' . $rowNum . ':'. $lastColumn . $rowNum);
+                // Define o título para a linha mesclada
+                $sheet->setCellValue('A' . $rowNum, $item->municipio." - ".$item->curso);
+                // Centraliza o título
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getAlignment()
+                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+                // Define o fundo verde (4CAF50) e a cor da fonte branca
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('4CAF50'); // Fundo verde
+
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFont()
+                    ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'))  // Cor da fonte branca
+                    ->setBold(true)  // Fonte em negrito
+                    ->setSize(12);   // Tamanho da fonte
+                $rowNum++;
+                $sheet->fromArray($columns->all(), NULL, 'A'.$rowNum);
+                // Define o fundo verde (4CAF50) e a cor da fonte branca
+
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFont()  // Cor da fonte branca
+                    ->setBold(true)  // Fonte em negrito
+                    ->setSize(12);
+                $rowNum++;
+                $old_title = $item->curso;
+            }
+            $item = json_decode($item, true);
+
+            // Preenche as células
+            $sheet->fromArray($item, NULL, 'A'.$rowNum, true);
+            
+            $rowNum++;
+        }
+
+        // Nome do Arquivo
+        $filename = 'Resultado.xlsx';
+
+        foreach (range('A', 'Z') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Cria o escritor Excel (Xlsx)
+        $writer = new Xlsx($spreadsheet);
+
+        // Configura o cabeçalho para forçar o download
+        return response()->stream(
+            function () use ($writer) {
+                $writer->save('php://output');
+            },
+            200,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]
+        );
     }
 }

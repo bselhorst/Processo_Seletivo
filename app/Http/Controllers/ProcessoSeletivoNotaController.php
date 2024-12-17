@@ -50,26 +50,45 @@ class ProcessoSeletivoNotaController extends Controller
         $analise->save();
 
         // Verifica se a análise foi deferida para fazer a inserção dos pontos
-        if ($analise->status == "Deferido"){
-            // Pega as configurações
-            $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $request->id_processo_seletivo)->get();
-            // Itera as configurações
-            foreach ($configuracoes as $conf){
-                // Cria o nome da nota
-                $path = \App\Helpers\StringHelper::createPath($conf->documento->nome);
+        // if ($analise->status == "Deferido"){
+        //     // Pega as configurações
+        //     $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $request->id_processo_seletivo)->get();
+        //     // Itera as configurações
+        //     foreach ($configuracoes as $conf){
+        //         // Cria o nome da nota
+        //         $path = \App\Helpers\StringHelper::createPath($conf->documento->nome);
 
-                // Verifica se a configuração possui a pontuação
-                if ($conf->pontuacao){
-                    // Cria uma nova instância
-                    $nota = new ProcessoSeletivoNota();
-                    $nota->id_processo_seletivo_analise = $analise->id;
-                    $nota->id_processo_seletivo_doc = $conf->documento->id;
-                    $nota->nota = $request->input("nota_".$path);
+        //         // Verifica se a configuração possui a pontuação
+        //         if ($conf->pontuacao){
+        //             // Cria uma nova instância
+        //             $nota = new ProcessoSeletivoNota();
+        //             $nota->id_processo_seletivo_analise = $analise->id;
+        //             $nota->id_processo_seletivo_doc = $conf->documento->id;
+        //             $nota->nota = $request->input("nota_".$path);
 
-                    // Salva no banco de notas
-                    $nota->save();
-                }
-            }
+        //             // Salva no banco de notas
+        //             $nota->save();
+        //         }
+        //     }
+        // }
+
+        $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $request->id_processo_seletivo)->get();
+        // Itera as configurações
+        foreach ($configuracoes as $conf){
+            // Cria o nome da nota
+            $path = \App\Helpers\StringHelper::createPath($conf->documento->nome);
+
+            // Verifica se a configuração possui a pontuação
+            // if ($conf->pontuacao){
+                // Cria uma nova instância
+                $nota = new ProcessoSeletivoNota();
+                $nota->id_processo_seletivo_analise = $analise->id;
+                $nota->id_processo_seletivo_doc = $conf->documento->id;
+                $nota->nota = ($request->input("nota_".$path)) ? $request->input("nota_".$path) : 0;
+
+                // Salva no banco de notas
+                $nota->save();
+            // }
         }
 
         // $new = ProcessoSeletivoInscricaoNota::create($validatedData);
@@ -118,26 +137,45 @@ class ProcessoSeletivoNotaController extends Controller
         $analise->save();
 
         // Verifica se a análise foi deferida para fazer a inserção dos pontos
-        if ($analise->status == "Deferido"){
-            // Pega as configurações
-            $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $request->id_processo_seletivo)->get();
-            // Itera as configurações
-            foreach ($configuracoes as $conf){
-                // Cria o nome da nota
-                $path = \App\Helpers\StringHelper::createPath($conf->documento->nome);
+        // if ($analise->status == "Deferido"){
+        //     // Pega as configurações
+        //     $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $request->id_processo_seletivo)->get();
+        //     // Itera as configurações
+        //     foreach ($configuracoes as $conf){
+        //         // Cria o nome da nota
+        //         $path = \App\Helpers\StringHelper::createPath($conf->documento->nome);
 
-                // Verifica se a configuração possui a pontuação
-                if ($conf->pontuacao){
-                    // Cria uma nova instância
-                    $nota = new ProcessoSeletivoNota();
-                    $nota->id_processo_seletivo_analise = $analise->id;
-                    $nota->id_processo_seletivo_doc = $conf->documento->id;
-                    $nota->nota = $request->input("nota_".$path);
+        //         // Verifica se a configuração possui a pontuação
+        //         if ($conf->pontuacao){
+        //             // Cria uma nova instância
+        //             $nota = new ProcessoSeletivoNota();
+        //             $nota->id_processo_seletivo_analise = $analise->id;
+        //             $nota->id_processo_seletivo_doc = $conf->documento->id;
+        //             $nota->nota = $request->input("nota_".$path);
 
-                    // Salva no banco de notas
-                    $nota->save();
-                }
-            }
+        //             // Salva no banco de notas
+        //             $nota->save();
+        //         }
+        //     }
+        // }
+
+        $configuracoes = ProcessoSeletivoConfiguracao::with("documento")->where('id_processo_seletivo', $request->id_processo_seletivo)->get();
+        // Itera as configurações
+        foreach ($configuracoes as $conf){
+            // Cria o nome da nota
+            $path = \App\Helpers\StringHelper::createPath($conf->documento->nome);
+
+            // Verifica se a configuração possui a pontuação
+            // if ($conf->pontuacao){
+                // Cria uma nova instância
+                $nota = new ProcessoSeletivoNota();
+                $nota->id_processo_seletivo_analise = $analise->id;
+                $nota->id_processo_seletivo_doc = $conf->documento->id;
+                $nota->nota = ($request->input("nota_".$path)) ? $request->input("nota_".$path) : 0;
+
+                // Salva no banco de notas
+                $nota->save();
+            // }
         }
 
         // $new = ProcessoSeletivoInscricaoNota::create($validatedData);

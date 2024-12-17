@@ -76,9 +76,14 @@
                                         <i class="ph-list"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ route('ps.resultado.xls', $item->id) }}" class="dropdown-item">
+                                            <i class="ph-file-xls me-2"></i>
+                                            Download do Resultado
+                                            <span class="badge bg-primary align-self-center rounded-pill ms-auto">Novo</span>
+                                        </a>
                                         <a href="{{ route('ps.resultado', $item->id) }}" class="dropdown-item">
                                             <i class="ph-users-four me-2"></i>
-                                            Download do Resultado
+                                            Download do Resultado em csv
                                         </a>
                                         <a href="{{ route('ps.indeferidos', $item->id) }}" class="dropdown-item">
                                             <i class="ph-user-minus me-2"></i>
@@ -87,7 +92,6 @@
                                         <a href="{{ route('pscom.index', $item->id) }}" class="dropdown-item">
                                             <i class="ph-megaphone me-2"></i>
                                             Comunicados
-                                            <span class="badge bg-primary align-self-center rounded-pill ms-auto">Novo</span>
                                         </a>
                                         @if (strtotime($item->data_encerramento) < strtotime('now'))
                                             <a href="{{ route('ps.resultadoForm', $item->id) }}" class="dropdown-item">
