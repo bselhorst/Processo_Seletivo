@@ -80,6 +80,7 @@ Route::prefix('processoseletivo')->group(function () {
     Route::get('/{id}/resultadoxls', [ProcessoSeletivoController::class, 'resultadoxls'])->middleware(['auth', 'verified'])->name('ps.resultado.xls');
     Route::get('/{id}/resultadoAntigo', [ProcessoSeletivoController::class, 'resultadoAntigo'])->middleware(['auth', 'verified'])->name('ps.resultado_antigo');
     Route::get('/{id}/indeferidos', [ProcessoSeletivoController::class, 'indeferidos'])->middleware(['auth', 'verified'])->name('ps.indeferidos');
+    Route::get('/{id}/indeferidosxls', [ProcessoSeletivoController::class, 'indeferidosxls'])->middleware(['auth', 'verified'])->name('ps.indeferidosxls');
     // Route::get('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoForm'])->middleware(['auth', 'verified'])->name('ps.resultadoForm');
     Route::patch('/{id}/resultadoForm', [ProcessoSeletivoController::class, 'resultadoStore'])->middleware(['auth', 'verified'])->name('ps.resultadoStore');
     Route::get('/removeFile/{id}/{filename}', [ProcessoSeletivoController::class, 'removeFile'])->middleware(['auth', 'verified'])->name('ps.removeFile');

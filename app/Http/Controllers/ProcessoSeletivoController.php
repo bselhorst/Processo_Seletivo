@@ -936,6 +936,203 @@ class ProcessoSeletivoController extends Controller
         );
     }
 
+    public function indeferidosxls($id){     
+
+        // Dados com as informações necessárias
+        $data = ProcessoSeletivoAnalise::selectRaw(
+                                                    'processo_seletivo_analises.id, 
+                                                    processo_seletivo_analises.id_inscricao, 
+                                                    auxiliar_municipios.nome as municipio,
+                                                    processo_seletivo_cursos.titulo as curso, 
+                                                    UPPER(processo_seletivo_inscricaos.nome),
+                                                    processo_seletivo_analises.mensagem'
+                                                    )
+        ->leftjoin('processo_seletivo_notas', 'processo_seletivo_analises.id', 'processo_seletivo_notas.id_processo_seletivo_analise')
+        ->join('processo_seletivo_inscricaos', 'processo_seletivo_inscricaos.id', 'processo_seletivo_analises.id_inscricao')
+        ->join('processo_seletivo_cursos', 'processo_seletivo_cursos.id', 'processo_seletivo_inscricaos.id_processo_seletivo_curso')
+        ->join('auxiliar_municipios', 'auxiliar_municipios.id', 'processo_seletivo_cursos.id_municipio')
+        ->whereIn('processo_seletivo_analises.id', function($query){
+            $query->select(DB::raw('MAX(processo_seletivo_analises.id)'))
+            ->from('processo_seletivo_analises')
+            ->groupBy('processo_seletivo_analises.id_inscricao');
+        })
+        ->where('processo_seletivo_cursos.id_processo_seletivo', $id)
+        ->where('processo_seletivo_analises.status', 'LIKE','Indeferido')
+        ->groupBy('processo_seletivo_analises.id', 
+                'processo_seletivo_analises.id_inscricao', 
+                'processo_seletivo_cursos.id', 
+                'processo_seletivo_cursos.titulo', 
+                'processo_seletivo_cursos.id_municipio', 
+                'auxiliar_municipios.nome', 
+                'processo_seletivo_inscricaos.nome',
+                'processo_seletivo_analises.mensagem')
+        ->orderBy('municipio')
+        ->orderBy('curso')
+        ->orderByDesc(DB::raw('SUM(processo_seletivo_notas.nota)'))
+        ->get();
+
+        // $nota = DB::table('processo_seletivo_notas')
+        //             // ->where('processo_seletivo_notas.id_processo_seletivo_analise', 12)
+        //             ->where('processo_seletivo_notas.id_processo_seletivo_analise', 1492)
+        //             ->where('processo_seletivo_notas.id_processo_seletivo_doc', 1)
+        //             ->orderBy('processo_seletivo_notas.id_processo_seletivo_doc')
+        //             ->get();
+
+        // return $nota[0]->nota;
+
+        // Info para pegar o nome dos documentos e criar um dicionário
+        $info = ProcessoSeletivoConfiguracao::join('processo_seletivo_documentos', 'processo_seletivo_documentos.id', 'processo_seletivo_configuracaos.id_processo_seletivo_doc')
+        ->where('id_processo_seletivo', $id)
+        ->get()
+        ->keyBy('id_processo_seletivo_doc');
+
+        // Pega a configuração do processo seletivo
+        $configuracao = ProcessoSeletivoConfiguracao::join('processo_seletivo_documentos', 'processo_seletivo_documentos.id', 'processo_seletivo_configuracaos.id_processo_seletivo_doc')
+        ->where('id_processo_seletivo', $id)
+        ->get();
+
+        // Processamento de notas
+        $data = $data->map(function ($data) use ($info, $configuracao) {
+            //adicionar as notas como novas colunas no resultado
+            $total = 0;
+
+            // $notas = DB::table('processo_seletivo_notas')
+            // ->where('processo_seletivo_notas.id_processo_seletivo_analise', $data->id)
+            // ->orderBy('processo_seletivo_notas.id_processo_seletivo_doc')
+            // ->pluck('nota', 'id_processo_seletivo_doc')
+            // ->toArray();
+            // if ($notas){
+            //     foreach ($notas as $index => $nota){
+            //         $data->{'Nota '. ($info[$index]->nome)} = $nota;
+            //         $total += $nota; 
+            //     }
+            // }else{
+            //     foreach($configuracao as $c){
+            //         if($c->pontuacao){
+
+            //             $data->{'Nota '. ($c->nome)} = 0;
+            //         }
+            //     }
+            // }
+
+            foreach($configuracao as $c){
+                if($c->pontuacao){
+                    $nota = DB::table('processo_seletivo_notas')
+                    // ->where('processo_seletivo_notas.id_processo_seletivo_analise', 12)
+                    ->where('processo_seletivo_notas.id_processo_seletivo_analise', $data->id)
+                    ->where('processo_seletivo_notas.id_processo_seletivo_doc', $c->id)
+                    ->orderBy('processo_seletivo_notas.id_processo_seletivo_doc')
+                    ->get();
+                    $total += $nota[0]->nota ?? 0;
+                    $data->{'Nota '. ($c->nome)} = $nota[0]->nota ?? 0;
+                }
+            }
+
+            $data->total = $total;
+
+            // Mover o valor da coluna "mensagem" para o final
+            $mensagem = $data->mensagem;
+            unset($data->mensagem);
+            $data->mensagem = $mensagem;
+
+            return $data;
+        });
+        
+        // Cria as colunas que vai no arquivo do excel
+        $columns = collect(['ID', 'Inscrição', 'Município', 'Curso', 'Nome']);
+        // Itera a configuração de da push na coluna das notas
+        foreach ($configuracao as $conf){
+            if($conf->pontuacao){
+                $columns->push("Nota ".$conf->nome);
+            }
+        }
+        // Adiciona as informações finais
+        $columns->push('Total');
+        $columns->push('Mensagem');
+
+        // Criação da planilha Excel
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Preencher as linhas com os dados
+        $rowNum = 1; // Começa a partir da segunda linha
+        $numColunas = (@$data[0]) ? count($data[0]->getAttributes()) : 0;
+        $array_branco = array_fill(0, $numColunas, '');
+        $old_title = '';
+        
+        foreach ($data as $item) {
+            if($old_title == '' || $old_title != $item->curso){
+                if($old_title != ''){
+                    $sheet->insertNewRowBefore($rowNum, 1);
+                    $rowNum++;
+                }
+                $sheet->insertNewRowBefore($rowNum, 1);
+
+                // Converte o número de colunas para o nome da última coluna
+                $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($numColunas);
+                // Mescla as células da linha 5 (de A até a última coluna necessária, por exemplo, 'Z')
+                $sheet->mergeCells('A' . $rowNum . ':'. $lastColumn . $rowNum);
+                // Define o título para a linha mesclada
+                $sheet->setCellValue('A' . $rowNum, $item->municipio." - ".$item->curso);
+                // Centraliza o título
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getAlignment()
+                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+                // Define o fundo verde (4CAF50) e a cor da fonte branca
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('4CAF50'); // Fundo verde
+
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFont()
+                    ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'))  // Cor da fonte branca
+                    ->setBold(true)  // Fonte em negrito
+                    ->setSize(12);   // Tamanho da fonte
+                $rowNum++;
+                $sheet->fromArray($columns->all(), NULL, 'A'.$rowNum);
+                // Define o fundo verde (4CAF50) e a cor da fonte branca
+
+                $sheet->getStyle('A' . $rowNum . ':'. $lastColumn . $rowNum)
+                    ->getFont()  // Cor da fonte branca
+                    ->setBold(true)  // Fonte em negrito
+                    ->setSize(12);
+                $rowNum++;
+                $old_title = $item->curso;
+            }
+            $item = json_decode($item, true);
+
+            // Preenche as células
+            $sheet->fromArray($item, NULL, 'A'.$rowNum, true);
+            
+            $rowNum++;
+        }
+
+        // Nome do Arquivo
+        $filename = 'Lista de indeferidos.xlsx';
+
+        foreach (range('A', 'Z') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Cria o escritor Excel (Xlsx)
+        $writer = new Xlsx($spreadsheet);
+
+        // Configura o cabeçalho para forçar o download
+        return response()->stream(
+            function () use ($writer) {
+                $writer->save('php://output');
+            },
+            200,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]
+        );
+    }
+
     public function resultadoteste($id, $id_inscricao){     
         // Dados com as informações necessárias
         // $data = ProcessoSeletivoAnalise::selectRaw(
